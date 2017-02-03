@@ -41,14 +41,16 @@ namespace YouTown
         bool IsRandom { get; }
         bool ProducesResource { get; }
         IChit Chit { get; set; }
+        IPort Port { get; }
         IResource Produce();
     }
     public class HexBase : IHex
     {
-        public HexBase(int id, Location location)
+        public HexBase(int id, Location location, IPort port)
         {
             Location = location;
             Id = id;
+            Port = port;
         }
 
         /// <inheritdoc/>
@@ -70,6 +72,8 @@ namespace YouTown
         public virtual bool ProducesResource { get; }
         public IChit Chit { get; set; }
 
+        public IPort Port { get; }
+
         public virtual IResource Produce()
         {
             throw new NotImplementedException();
@@ -78,7 +82,7 @@ namespace YouTown
 
     public class RandomHex : HexBase
     {
-        public RandomHex(Location location, int id) : base(id, location) { }
+        public RandomHex(Location location, int id, IPort port) : base(id, location, port) { }
         public override bool IsRandom => true;
         public override Color Color => Color.Black;
     }
@@ -86,7 +90,7 @@ namespace YouTown
     public class Water : HexBase
     {
         public static readonly HexType WaterType = new HexType("water");
-        public Water(int id, Location location) : base(id, location) { }
+        public Water(int id, Location location, IPort port) : base(id, location, port) { }
         public override Color Color => Color.Blue;
         public override bool CanHavePirate => true;
         public override bool CanHavePort => true;
@@ -97,7 +101,7 @@ namespace YouTown
     public class Desert : HexBase
     {
         public static readonly HexType DesertType = new HexType("desert");
-        public Desert(int id, Location location) : base(id, location) { }
+        public Desert(int id, Location location, IPort port) : base(id, location, port) { }
         public override Color Color => Color.LightYellow;
         public override bool CanHaveRobber => true;
         public override HexType HexType => DesertType;
@@ -106,7 +110,7 @@ namespace YouTown
     public class Pasture : HexBase
     {
         public static readonly HexType PastureType = new HexType("pasture");
-        public Pasture(int id, Location location) : base(id, location) { }
+        public Pasture(int id, Location location, IPort port) : base(id, location, port) { }
         public override HexType HexType => PastureType;
         public override Color Color => Color.LightGreen;
         public override bool CanHaveRobber => true;
@@ -118,7 +122,7 @@ namespace YouTown
     public class Forest : HexBase
     {
         public static readonly HexType ForestType = new HexType("forest");
-        public Forest(int id, Location location) : base(id, location) { }
+        public Forest(int id, Location location, IPort port) : base(id, location, port) { }
         public override HexType HexType => ForestType;
         public override Color Color => Color.DarkGreen;
         public override bool CanHaveRobber => true;
@@ -130,7 +134,7 @@ namespace YouTown
     public class Hill : HexBase
     {
         public static readonly HexType HillType = new HexType("hill");
-        public Hill(int id, Location location) : base(id, location) { }
+        public Hill(int id, Location location, IPort port) : base(id, location, port) { }
         public override HexType HexType => HillType;
         public override Color Color => Color.Red;
         public override bool CanHaveRobber => true;
@@ -142,7 +146,7 @@ namespace YouTown
     public class Mountain : HexBase
     {
         public static readonly HexType MountainType = new HexType("mountain");
-        public Mountain(int id, Location location) : base(id, location) { }
+        public Mountain(int id, Location location, IPort port) : base(id, location, port) { }
         public override HexType HexType => MountainType;
         public override Color Color => Color.LightGreen;
         public override bool CanHaveRobber => true;
@@ -154,7 +158,7 @@ namespace YouTown
     public class Field : HexBase
     {
         public static readonly HexType FieldType = new HexType("field");
-        public Field(int id, Location location) : base(id, location) { }
+        public Field(int id, Location location, IPort port) : base(id, location, port) { }
         public override HexType HexType => FieldType;
         public override Color Color => Color.DarkYellow;
         public override bool CanHaveRobber => true;
