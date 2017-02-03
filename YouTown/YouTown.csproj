@@ -40,9 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IChit.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Edge.cs" />
-    <Compile Include="Hex.cs" />
+    <Compile Include="IHex.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Point.cs" />

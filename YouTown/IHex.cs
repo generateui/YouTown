@@ -40,8 +40,8 @@ namespace YouTown
         bool CanHavePort { get; }
         bool IsRandom { get; }
         bool ProducesResource { get; }
+        IChit Chit { get; set; }
         IResource Produce();
-
     }
     public class HexBase : IHex
     {
@@ -68,6 +68,8 @@ namespace YouTown
         public virtual bool CanHavePort { get; }
         public virtual bool IsRandom { get; }
         public virtual bool ProducesResource { get; }
+        public IChit Chit { get; set; }
+
         public virtual IResource Produce()
         {
             throw new NotImplementedException();
