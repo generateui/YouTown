@@ -15,6 +15,7 @@
         public static readonly Color LightYellow = new Color("lightyellow");
         public static readonly Color Blue = new Color("blue");
         public static readonly Color Black = new Color("black");
+        public static readonly Color White = new Color("white");
 
         private readonly string _color;
         private Color(string color)

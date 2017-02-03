@@ -7,17 +7,22 @@
     public class ResourceType
     {
         private readonly string _resourceType;
-        public ResourceType(string resourceType)
+        public ResourceType(string resourceType, Color color)
         {
             _resourceType = resourceType;
+            Color = color;
         }
+
+        public Color Color { get; }
 
         protected bool Equals(ResourceType other)
         {
-            return string.Equals(_resourceType, other._resourceType);
+            return string.Equals(_resourceType, other._resourceType) && Equals(Color, other.Color);
         }
 
-        /// <inheritdoc/>
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <returns>true if the specified object  is equal to the current object; otherwise, false.</returns>
+        /// <param name="obj">The object to compare with the current object. </param>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -26,10 +31,14 @@
             return Equals((ResourceType) obj);
         }
 
-        /// <inheritdoc/>
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
-            return _resourceType?.GetHashCode() ?? 0;
+            unchecked
+            {
+                return ((_resourceType?.GetHashCode() ?? 0)*397) ^ (Color?.GetHashCode() ?? 0);
+            }
         }
     }
 
@@ -46,7 +55,6 @@
     public interface IResource : IGameItem
     {
         bool IsTradeable { get; }
-        Color Color { get; }
         ResourceType ResourceType { get; }
     }
 
@@ -60,14 +68,12 @@
         /// <inheritdoc/>
         public int Id { get; }
         public virtual bool IsTradeable { get; }
-        public virtual Color Color { get; }
         public virtual ResourceType ResourceType { get; }
 
         protected bool Equals(ResourceBase other)
         {
             return Id == other.Id &&
                 IsTradeable == other.IsTradeable && 
-                Equals(Color, other.Color) && 
                 Equals(ResourceType, other.ResourceType);
         }
 
@@ -87,7 +93,6 @@
             {
                 var hashCode = Id;
                 hashCode = (hashCode*397) ^ IsTradeable.GetHashCode();
-                hashCode = (hashCode*397) ^ (Color?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ (ResourceType?.GetHashCode() ?? 0);
                 return hashCode;
             }
@@ -96,56 +101,51 @@
 
     public class Wheat : ResourceBase
     {
-        public static readonly ResourceType WheatType = new ResourceType("wheat");
+        public static readonly ResourceType WheatType = new ResourceType("wheat", Color.DarkYellow);
         public Wheat(int id) : base(id)
         {
         }
         public override bool IsTradeable => true;
-        public override Color Color => Color.DarkYellow;
         public override ResourceType ResourceType => WheatType;
     }
 
     public class Timber : ResourceBase
     {
-        public static readonly ResourceType TimberType = new ResourceType("timber");
+        public static readonly ResourceType TimberType = new ResourceType("timber", Color.DarkGreen);
         public Timber(int id) : base(id)
         {
         }
         public override bool IsTradeable => true;
-        public override Color Color => Color.DarkGreen;
         public override ResourceType ResourceType => TimberType;
     }
 
     public class Clay : ResourceBase
     {
-        public static readonly ResourceType ClayType = new ResourceType("clay");
+        public static readonly ResourceType ClayType = new ResourceType("clay", Color.Red);
         public Clay(int id) : base(id)
         {
         }
         public override bool IsTradeable => true;
-        public override Color Color => Color.Red;
         public override ResourceType ResourceType => ClayType;
     }
 
     public class Ore : ResourceBase
     {
-        public static readonly ResourceType OreType = new ResourceType("ore");
+        public static readonly ResourceType OreType = new ResourceType("ore", Color.Purple);
         public Ore(int id) : base(id)
         {
         }
         public override bool IsTradeable => true;
-        public override Color Color => Color.Purple;
         public override ResourceType ResourceType => OreType;
     }
 
     public class Sheep : ResourceBase
     {
-        public static readonly ResourceType SheepType = new ResourceType("sheep");
+        public static readonly ResourceType SheepType = new ResourceType("sheep", Color.LightGreen);
         public Sheep(int id) : base(id)
         {
         }
         public override bool IsTradeable => true;
-        public override Color Color => Color.LightGreen;
         public override ResourceType ResourceType => SheepType;
     }
 }
