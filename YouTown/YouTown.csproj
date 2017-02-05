@@ -64,6 +64,7 @@
     <Compile Include="ITurn.cs" />
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
+    <Compile Include="IValidator.cs" />
     <Compile Include="LargestArmy.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Point.cs" />
