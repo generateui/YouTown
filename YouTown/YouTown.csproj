@@ -49,6 +49,7 @@
     <Compile Include="IChitList.cs" />
     <Compile Include="IDevelopmentCard.cs" />
     <Compile Include="IGame.cs" />
+    <Compile Include="IGamePhase.cs" />
     <Compile Include="IHex.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="IHexList.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="IRandom.cs" />
     <Compile Include="IResourceList.cs" />
     <Compile Include="ITurn.cs" />
+    <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="LargestArmy.cs" />
     <Compile Include="Location.cs" />
