@@ -4,7 +4,7 @@
     /// Wraps a string to ensure type safety
     /// </summary>
     /// Tiny type implementation pattern
-    public class ResourceType
+    public sealed class ResourceType
     {
         private readonly string _resourceType;
         public ResourceType(string resourceType, Color color)
@@ -17,7 +17,7 @@
 
         public string Value => _resourceType;
 
-        protected bool Equals(ResourceType other)
+        private bool Equals(ResourceType other)
         {
             return string.Equals(_resourceType, other._resourceType) && Equals(Color, other.Color);
         }

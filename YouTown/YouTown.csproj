@@ -59,6 +59,7 @@
     <Compile Include="IResourceList.cs" />
     <Compile Include="ITurn.cs" />
     <Compile Include="IUser.cs" />
+    <Compile Include="LargestArmy.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

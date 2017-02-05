@@ -14,8 +14,8 @@ namespace YouTown
         Edge Edge { get; }
         int InAmount { get; }
         int OutAmount { get; }
-        //        int Divide(ResourceList resources, ResourceType resourceType);
-        bool CanTrade(IResource resource);
+        int Divide(IResourceList resources, ResourceType resourceType);
+        bool CanTrade(ResourceType resourceType);
         bool IsRandom { get; }
         Color Color { get; }
         bool HasResource { get; }
@@ -49,7 +49,16 @@ namespace YouTown
         public virtual Color Color { get; }
         public virtual bool HasResource { get; }
 
-        public virtual bool CanTrade(IResource resource)
+        public int Divide(IResourceList resources, ResourceType resourceType)
+        {
+            if (!resources.HasType(resourceType))
+            {
+                return 0;
+            }
+            return resources.OfType(resourceType).Count() / InAmount;
+        }
+
+        public virtual bool CanTrade(ResourceType resourceType)
         {
             throw new NotImplementedException();
         }
@@ -105,16 +114,15 @@ namespace YouTown
 
     public class FourToOnePort : PortBase
     {
-        public FourToOnePort(int id, Location waterLocation, Location landLocation)
+        public FourToOnePort(int id = Identifier.DontCare, Location waterLocation = null, Location landLocation = null)
             : base(id, waterLocation, landLocation) { }
 
         public override Color Color => Color.White;
         public override int InAmount => 4;
         public override int OutAmount => 1;
 
-        public override bool CanTrade(IResource resource)
+        public override bool CanTrade(ResourceType resourceType)
         {
-            var resourceType = resource.ResourceType;
             return resourceType.Equals(Wheat.WheatType) ||
                    resourceType.Equals(Ore.OreType) ||
                    resourceType.Equals(Timber.TimberType) ||
@@ -137,9 +145,8 @@ namespace YouTown
         public override int InAmount => 3;
         public override int OutAmount => 1;
 
-        public override bool CanTrade(IResource resource)
+        public override bool CanTrade(ResourceType resourceType)
         {
-            var resourceType = resource.ResourceType;
             return resourceType.Equals(Wheat.WheatType) ||
                    resourceType.Equals(Ore.OreType) ||
                    resourceType.Equals(Timber.TimberType) ||
@@ -160,7 +167,7 @@ namespace YouTown
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Wheat.WheatType;
         public override Color Color => ResourceType.Color;
-        public override bool CanTrade(IResource resource) => resource.ResourceType.Equals(ResourceType);
+        public override bool CanTrade(ResourceType resourceType) => resourceType.Equals(ResourceType);
     }
     public class ClayPort : PortBase
     {
@@ -174,7 +181,7 @@ namespace YouTown
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Clay.ClayType;
         public override Color Color => ResourceType.Color;
-        public override bool CanTrade(IResource resource) => resource.ResourceType.Equals(ResourceType);
+        public override bool CanTrade(ResourceType resourceType) => resourceType.Equals(ResourceType);
     }
     public class TimberPort : PortBase
     {
@@ -188,7 +195,7 @@ namespace YouTown
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Timber.TimberType;
         public override Color Color => ResourceType.Color;
-        public override bool CanTrade(IResource resource) => resource.ResourceType.Equals(ResourceType);
+        public override bool CanTrade(ResourceType resourceType) => resourceType.Equals(ResourceType);
     }
     public class OrePort : PortBase
     {
@@ -202,7 +209,7 @@ namespace YouTown
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Ore.OreType;
         public override Color Color => ResourceType.Color;
-        public override bool CanTrade(IResource resource) => resource.ResourceType.Equals(ResourceType);
+        public override bool CanTrade(ResourceType resourceType) => resourceType.Equals(ResourceType);
     }
     public class SheepPort : PortBase
     {
@@ -216,6 +223,6 @@ namespace YouTown
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Sheep.SheepType;
         public override Color Color => ResourceType.Color;
-        public override bool CanTrade(IResource resource) => resource.ResourceType.Equals(ResourceType);
+        public override bool CanTrade(ResourceType resourceType) => resourceType.Equals(ResourceType);
     }
 }
