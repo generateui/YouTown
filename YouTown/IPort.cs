@@ -30,7 +30,10 @@ namespace YouTown
             WaterLocation = waterLocation;
             LandLocation = landLocation;
 
-            Edge = new Edge(waterLocation, landLocation);
+            if (waterLocation != null && landLocation != null)
+            {
+                Edge = new Edge(waterLocation, landLocation);
+            }
         }
 
         /// <inheritdoc />
@@ -92,6 +95,14 @@ namespace YouTown
         }
     }
 
+    public class RandomPort : PortBase
+    {
+        public RandomPort(int id, Location waterLocation, Location landLocation)
+            : base(id, waterLocation, landLocation) { }
+        public override Color Color => Color.Black;
+
+    }
+
     public class FourToOnePort : PortBase
     {
         public FourToOnePort(int id, Location waterLocation, Location landLocation)
@@ -114,7 +125,10 @@ namespace YouTown
 
     public class ThreeToOnePort : PortBase
     {
-        public ThreeToOnePort(int id, Location waterLocation, Location landLocation)
+        public ThreeToOnePort(
+            int id = Identifier.DontCare, 
+            Location waterLocation = null, 
+            Location landLocation = null)
             : base(id, waterLocation, landLocation)
         {
         }
@@ -136,8 +150,12 @@ namespace YouTown
 
     public class WheatPort : PortBase
     {
-        public WheatPort(int id, Location waterLocation, Location landLocation)
-            : base(id, waterLocation, landLocation) { }
+        public WheatPort(int id = Identifier.DontCare,
+            Location waterLocation = null,
+            Location landLocation = null)
+            : base(id, waterLocation, landLocation)
+        {
+        }
         public override int InAmount => 2;
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Wheat.WheatType;
@@ -146,8 +164,12 @@ namespace YouTown
     }
     public class ClayPort : PortBase
     {
-        public ClayPort(int id, Location waterLocation, Location landLocation)
-            : base(id, waterLocation, landLocation) { }
+        public ClayPort(int id = Identifier.DontCare,
+            Location waterLocation = null,
+            Location landLocation = null)
+            : base(id, waterLocation, landLocation)
+        {
+        }
         public override int InAmount => 2;
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Clay.ClayType;
@@ -156,8 +178,12 @@ namespace YouTown
     }
     public class TimberPort : PortBase
     {
-        public TimberPort(int id, Location waterLocation, Location landLocation)
-            : base(id, waterLocation, landLocation) { }
+        public TimberPort(int id = Identifier.DontCare,
+            Location waterLocation = null,
+            Location landLocation = null)
+            : base(id, waterLocation, landLocation)
+        {
+        }
         public override int InAmount => 2;
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Timber.TimberType;
@@ -166,8 +192,12 @@ namespace YouTown
     }
     public class OrePort : PortBase
     {
-        public OrePort(int id, Location waterLocation, Location landLocation)
-            : base(id, waterLocation, landLocation) { }
+        public OrePort(int id = Identifier.DontCare,
+            Location waterLocation = null,
+            Location landLocation = null)
+            : base(id, waterLocation, landLocation)
+        {
+        }
         public override int InAmount => 2;
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Ore.OreType;
@@ -176,8 +206,12 @@ namespace YouTown
     }
     public class SheepPort : PortBase
     {
-        public SheepPort(int id, Location waterLocation, Location landLocation)
-            : base(id, waterLocation, landLocation) { }
+        public SheepPort(int id = Identifier.DontCare,
+            Location waterLocation = null,
+            Location landLocation = null)
+            : base(id, waterLocation, landLocation)
+        {
+        }
         public override int InAmount => 2;
         public override int OutAmount => 1;
         public override ResourceType ResourceType => Sheep.SheepType;

@@ -87,6 +87,12 @@ namespace YouTown
             }
         }
 
+        public bool Connects(Edge other)
+        {
+            var neighbors = Neighbors;
+            return neighbors.Contains(other);
+        }
+
         protected bool Equals(Edge other)
         {
             return (Equals(Location1, other.Location1) && Equals(Location2, other.Location2)) ||
