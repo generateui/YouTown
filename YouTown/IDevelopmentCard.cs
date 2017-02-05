@@ -1,4 +1,7 @@
-﻿namespace YouTown
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace YouTown
 {
     public interface IDevelopmentCard : IGameItem
     {
@@ -10,7 +13,7 @@
         ITurn TurnBought { get; set; }
         ITurn TurnPlayed { get; set; }
         IPlayer Player { get; set; }
-//        void Play(IGame game);
+        void Play(IGame game);
     }
 
     public abstract class DevelopmentCardBase
@@ -32,33 +35,85 @@
         }
 
         public override bool MoveToStockAfterPlay => true;
+        public void Play(IGame game)
+        {
+            Player.VictoryPoints.Add(this);
+        }
+
         public int VictoryPoints => 1;
     }
 
-    public class Soldier : DevelopmentCardBase, IDevelopmentCard
+    public class Soldier : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
-        public Soldier(int id = Identifier.DontCare)
+        public Soldier(int id = Identifier.DontCare, bool isAtServer = false, IPlayer playerAtClient = null)
         {
+            PlayerAtClient = playerAtClient;
+            IsAtServer = isAtServer;
             Id = id;
         }
 
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
         public override bool MoveToStockAfterPlay => true;
+        public void Play(IGame game)
+        {
+            // TODO: implement
+        }
+
+        public bool IsAtServer { get; }
+        public IPlayer PlayerAtClient { get; }
     }
 
-    public class Invention : DevelopmentCardBase, IDevelopmentCard
+    public class Invention : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
+        public Invention(bool isAtServer = false, IPlayer playerAtClient = null)
+        {
+            PlayerAtClient = playerAtClient;
+            IsAtServer = isAtServer;
+        }
+
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
         public IResourceList PickedResources { get; set; }
+        public bool IsAtServer { get; }
+        public IPlayer PlayerAtClient { get; }
+
+        public void Play(IGame game)
+        {
+            Player.GainResourcesFrom(game.Bank.Resources, PickedResources, this);
+        }
+
     }
 
-    public class Monopoly : DevelopmentCardBase, IDevelopmentCard
+    public class Monopoly : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
+        private readonly Dictionary<IPlayer, IResourceList> _stolen = 
+            new Dictionary<IPlayer, IResourceList>();
+
+        public Monopoly(bool isAtServer = false, IPlayer playerAtClient = null)
+        {
+            IsAtServer = isAtServer;
+            PlayerAtClient = playerAtClient;
+        }
+
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
         public ResourceType ResourceType { get; set; }
+        public bool IsAtServer { get; }
+        public IPlayer PlayerAtClient { get; }
+
+        public IReadOnlyDictionary<IPlayer, IResourceList> Stolen => _stolen;
+
+        public void Play(IGame game)
+        {
+            var opponents = game.Players.Where(p => p != Player);
+            foreach (var opponent in opponents)
+            {
+                IResourceList toSteal = opponent.Hand.OfType(ResourceType);
+                _stolen[opponent] = toSteal;
+                Player.GainResourcesFrom(opponent.Hand, toSteal, this);
+            }
+        }
     }
 
     /// <summary>
@@ -100,5 +155,13 @@
 
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
+
+        public void Play(IGame game)
+        {
+            var token1 = new Token(Player, game.Identifier.NewId());
+            var token2 = new Token(Player, game.Identifier.NewId());
+            token1.AddToPlayer(Player);
+            token2.AddToPlayer(Player);
+        }
     }
 }

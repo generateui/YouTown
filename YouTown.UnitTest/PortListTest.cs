@@ -28,7 +28,7 @@ namespace YouTown.UnitTest
         }
 
         [TestMethod]
-        public void FourToOnePortOnly_YieldCorectGold()
+        public void FourToOnePort_YieldCorrectGold()
         {
             var resourceList = new ResourceList(new List<IResource>
             {
@@ -50,7 +50,7 @@ namespace YouTown.UnitTest
         }
 
         [TestMethod]
-        public void FourToOneAndThreeToOnePortOnly_YieldCorectGold()
+        public void FourToOneAndThreeToOnePort_YieldCorrectGold()
         {
             var resourceList = new ResourceList(new List<IResource>
             {

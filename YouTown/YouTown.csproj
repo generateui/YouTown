@@ -41,16 +41,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="City.cs" />
+    <Compile Include="IBank.cs" />
     <Compile Include="IBoard.cs" />
     <Compile Include="IChit.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="IChitList.cs" />
     <Compile Include="IDevelopmentCard.cs" />
+    <Compile Include="IGame.cs" />
     <Compile Include="IHex.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="IHexList.cs" />
     <Compile Include="IIdentifier.cs" />
+    <Compile Include="IObscurable.cs" />
     <Compile Include="IPiece.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IPort.cs" />

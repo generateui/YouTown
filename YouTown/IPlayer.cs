@@ -22,5 +22,7 @@ namespace YouTown
         IDictionary<Edge, Road> Roads { get; }
         IDictionary<Point, Town> Towns { get; }
         IDictionary<Point, City> Cities { get; }
+
+        void GainResourcesFrom(IResourceList from, IResourceList toMove, IObscurable obscurable);
     }
 }
