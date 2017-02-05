@@ -27,6 +27,14 @@ namespace YouTown
         public IPlayer Player { get; set; }
     }
 
+    public class DevelopmentCardCost : ResourceList
+    {
+        public DevelopmentCardCost()
+        {
+            AddRangeSafe(new Wheat(), new Sheep(), new Ore());
+        }
+    }
+
     public class VictoryPointCard : DevelopmentCardBase, IDevelopmentCard, IVictoryPoint
     {
         public VictoryPointCard(int id = Identifier.DontCare)

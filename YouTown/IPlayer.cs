@@ -6,6 +6,7 @@ namespace YouTown
     {
         IUser User { get; }
         string Color { get; } //TODO: introduce PlayerColor
+        bool IsOnTurn { get; set; }
 
         ISet<IPiece> Pieces { get; }
         IDictionary<Edge, IList<IEdgePiece>> EdgePieces { get; }
@@ -23,6 +24,7 @@ namespace YouTown
         IDictionary<Point, Town> Towns { get; }
         IDictionary<Point, City> Cities { get; }
 
-        void GainResourcesFrom(IResourceList from, IResourceList toMove, IObscurable obscurable);
+        void GainResourcesFrom(IResourceList from, IResourceList toGain, IObscurable obscurable);
+        void LooseResourcesTo(IResourceList to, IResourceList toLoose, IObscurable obscurable);
     }
 }

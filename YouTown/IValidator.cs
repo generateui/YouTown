@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -109,6 +110,45 @@ namespace YouTown
             if (!player.Stock[City.CityType].Any())
             {
                 return new Invalid($"player {player.User.Name} does not have a city in stock");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class IsOnTurn : ValidatorBase<IPlayer>
+    {
+        public override IValidationResult Validate(IPlayer player)
+        {
+            if (!player.IsOnTurn)
+            {
+                return new Invalid($"it's not player {player.User.Name}'s turn");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class NotEmpty : ValidatorBase<IList>
+    {
+        public override IValidationResult Validate(IList list)
+        {
+            if (list.Count == 0)
+            {
+                // TODO: specify name of the list
+                return new Invalid("list is empty");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class CanPayPiece : ValidatorBase<Tuple<IPlayer, IPiece>>
+    {
+        public override IValidationResult Validate(Tuple<IPlayer, IPiece> pair)
+        {
+            var player = pair.Item1;
+            var piece = pair.Item2;
+            if (!player.Hand.HasAtLeast(piece.Cost))
+            {
+                return new Invalid($"player {player.User.Name} does not have enough resources to pay for a {piece.PieceType}");
             }
             return Validator.Valid;
         }
