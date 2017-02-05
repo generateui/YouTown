@@ -40,23 +40,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="City.cs" />
     <Compile Include="IBoard.cs" />
     <Compile Include="IChit.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="IChitList.cs" />
+    <Compile Include="IDevelopmentCard.cs" />
     <Compile Include="IHex.cs" />
     <Compile Include="IGameItem.cs" />
     <Compile Include="IHexList.cs" />
     <Compile Include="IIdentifier.cs" />
+    <Compile Include="IPiece.cs" />
+    <Compile Include="IPlayer.cs" />
     <Compile Include="IPort.cs" />
     <Compile Include="IPortList.cs" />
     <Compile Include="IRandom.cs" />
+    <Compile Include="IResourceList.cs" />
+    <Compile Include="ITurn.cs" />
+    <Compile Include="IUser.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IResource.cs" />
+    <Compile Include="Road.cs" />
     <Compile Include="Robber.cs" />
+    <Compile Include="Town.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
