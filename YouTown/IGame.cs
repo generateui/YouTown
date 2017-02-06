@@ -4,6 +4,7 @@ namespace YouTown
 {
     public interface IGame
     {
+        IBoard Board { get; }
         IBank Bank { get; }
         IList<IPlayer> Players { get; }
         IIdentifier Identifier { get; }

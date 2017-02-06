@@ -4,17 +4,29 @@ using System.Linq;
 
 namespace YouTown
 {
-    public interface IBoard<out TBoard> where TBoard : IBoard<TBoard>
+    public interface IBoard
     {
-        Robber Robber { get; }
-        TBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random);
         IReadOnlyDictionary<Location, IHex> HexesByLocation { get; }
+        IDictionary<Edge, Road> RoadsByEdge { get; } 
+        IDictionary<Point, Town> TownsByPoint { get; } 
+        IDictionary<Point, City> CitiesByPoint { get; }
+        IDictionary<Point, IPointPiece> PiecesByPoint { get; } 
+        IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
+        ISet<IPiece> Pieces { get; }
+        Robber Robber { get; } // TODO: does this belong to IGame or IBoard?
+
+        /// <summary>
+        /// Uses this instance of board to create a new instance where placeholders for 
+        /// hexes, chits and ports are replaced by concrete hexes, chits and ports.
+        /// </summary>
+        /// <returns>A new instance of type of self</returns>
+        IBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random);
     }
 
     /// <summary>
     /// Board with X concentric circles bordered by a circle of water
     /// </summary>
-    public class ConcentricBoard : IBoard<ConcentricBoard>
+    public class ConcentricBoard : IBoard
     {
         private Dictionary<Location, IHex> _hexesbyLocation = new Dictionary<Location, IHex>();
 
@@ -104,7 +116,14 @@ namespace YouTown
             }
         }
 
+        public ISet<IPiece> Pieces { get; }
         public Robber Robber { get; }
+        public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;
+        public IDictionary<Edge, Road> RoadsByEdge { get; }
+        public IDictionary<Point, Town> TownsByPoint { get; }
+        public IDictionary<Point, City> CitiesByPoint { get; }
+        public IDictionary<Point, IPointPiece> PiecesByPoint { get; }
+        public IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
 
         public int ConcentricCircles { get; set; }
 
@@ -127,7 +146,7 @@ namespace YouTown
         /// A new board instance ready to play on
         /// </returns>
         /// TODO: move the different algorithms to separate classes for reuse
-        public ConcentricBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random)
+        public IBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random)
         {
             var board = new ConcentricBoard(_hexesbyLocation);
             // replace randomports with ports
@@ -221,6 +240,5 @@ namespace YouTown
             return board;
         }
 
-        public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;
     }
 }

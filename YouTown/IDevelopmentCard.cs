@@ -3,28 +3,19 @@ using System.Linq;
 
 namespace YouTown
 {
-    public interface IDevelopmentCard : IGameItem
+    public interface IDevelopmentCard : IPiece
     {
         bool MaxOnePerTurn { get; }
         bool WaitOneTurnBeforePlay { get; }
         bool MoveToStockAfterPlay { get; }
 //        bool turnAllowed(TurnPhase turn);
 //        bool gameAllowed(GamePhase phase);
+//        void AddToBoard(IBoard board);
+//        void RemoveFromBoard(IBoard board);
         ITurn TurnBought { get; set; }
         ITurn TurnPlayed { get; set; }
-        IPlayer Player { get; set; }
         void Play(IGame game);
-    }
 
-    public abstract class DevelopmentCardBase
-    {
-        public int Id { get; protected set; }
-        public virtual bool MaxOnePerTurn { get; }
-        public virtual bool WaitOneTurnBeforePlay { get; }
-        public virtual bool MoveToStockAfterPlay { get; }
-        public ITurn TurnBought { get; set; }
-        public ITurn TurnPlayed { get; set; }
-        public IPlayer Player { get; set; }
     }
 
     public class DevelopmentCardCost : ResourceList
@@ -32,6 +23,45 @@ namespace YouTown
         public DevelopmentCardCost()
         {
             AddRangeSafe(new Wheat(), new Sheep(), new Ore());
+        }
+    }
+
+    public abstract class DevelopmentCardBase : IDevelopmentCard
+    {
+        public static PieceType DevelopmentCardType = new PieceType("developmentcard");
+        public int Id { get; protected set; }
+        public virtual bool MaxOnePerTurn { get; }
+        public virtual bool WaitOneTurnBeforePlay { get; }
+        public virtual bool MoveToStockAfterPlay { get; }
+        public ITurn TurnBought { get; set; }
+        public ITurn TurnPlayed { get; set; }
+        public IPlayer Player { get; set; }
+        public PieceType PieceType => DevelopmentCardType;
+        public bool AffectsRoad => false;
+
+        public IResourceList Cost => new DevelopmentCardCost();
+
+        public virtual void Play(IGame game)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddToPlayer(IPlayer player)
+        {
+            player.DevelopmentCards.Add(this);
+        }
+
+        public void RemoveFromPlayer(IPlayer player)
+        {
+            player.DevelopmentCards.Remove(this);
+        }
+
+        public void AddToBoard(IBoard board)
+        {
+        }
+
+        public void RemoveFromBoard(IBoard board)
+        {
         }
     }
 
@@ -43,7 +73,7 @@ namespace YouTown
         }
 
         public override bool MoveToStockAfterPlay => true;
-        public void Play(IGame game)
+        public override void Play(IGame game)
         {
             Player.VictoryPoints.Add(this);
         }
@@ -63,7 +93,7 @@ namespace YouTown
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
         public override bool MoveToStockAfterPlay => true;
-        public void Play(IGame game)
+        public override void Play(IGame game)
         {
             // TODO: implement
         }
@@ -86,7 +116,7 @@ namespace YouTown
         public bool IsAtServer { get; }
         public IPlayer PlayerAtClient { get; }
 
-        public void Play(IGame game)
+        public override void Play(IGame game)
         {
             Player.GainResourcesFrom(game.Bank.Resources, PickedResources, this);
         }
@@ -112,7 +142,7 @@ namespace YouTown
 
         public IReadOnlyDictionary<IPlayer, IResourceList> Stolen => _stolen;
 
-        public void Play(IGame game)
+        public override void Play(IGame game)
         {
             var opponents = game.Players.Where(p => p != Player);
             foreach (var opponent in opponents)
@@ -159,12 +189,22 @@ namespace YouTown
             {
                 player.Pieces.Remove(this);
             }
+
+            public void AddToBoard(IBoard board)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public void RemoveFromBoard(IBoard board)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
 
-        public void Play(IGame game)
+        public override void Play(IGame game)
         {
             var token1 = new Token(Player, game.Identifier.NewId());
             var token2 = new Token(Player, game.Identifier.NewId());

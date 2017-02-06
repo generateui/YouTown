@@ -44,5 +44,19 @@
             player.PointPieces[Point].Remove(this);
             // TODO: IProducer
         }
+
+        public void AddToBoard(IBoard board)
+        {
+            board.TownsByPoint[Point] = this;
+            board.PiecesByPoint[Point] = this;
+            board.Pieces.Add(this);
+        }
+
+        public void RemoveFromBoard(IBoard board)
+        {
+            board.TownsByPoint.Remove(Point);
+            board.PiecesByPoint.Remove(Point);
+            board.Pieces.Remove(this);
+        }
     }
 }

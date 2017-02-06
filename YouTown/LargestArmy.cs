@@ -28,5 +28,15 @@ namespace YouTown
             player.Pieces.Remove(this);
             player.VictoryPoints.Remove(this);
         }
+
+        public void AddToBoard(IBoard board)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveFromBoard(IBoard board)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

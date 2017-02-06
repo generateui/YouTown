@@ -40,5 +40,19 @@
             player.Stock[RoadType].Add(this);
             player.EdgePieces[Edge].Remove(this);
         }
+
+        public void AddToBoard(IBoard board)
+        {
+            board.RoadsByEdge[Edge] = this;
+            board.PiecesByEdge[Edge] = this;
+            board.Pieces.Add(this);
+        }
+
+        public void RemoveFromBoard(IBoard board)
+        {
+            board.RoadsByEdge.Remove(Edge);
+            board.PiecesByEdge.Remove(Edge);
+            board.Pieces.Remove(this);
+        }
     }
 }

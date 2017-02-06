@@ -46,6 +46,8 @@
 
         void AddToPlayer(IPlayer player);
         void RemoveFromPlayer(IPlayer player);
+        void AddToBoard(IBoard board);
+        void RemoveFromBoard(IBoard board);
 
         IResourceList Cost { get; }
     }

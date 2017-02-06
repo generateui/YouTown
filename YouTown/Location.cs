@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace YouTown
 {
+    /// <summary>
+    /// Uses three-axis system 
+    /// </summary>
+    /// <seealso cref="http://www.redblobgames.com/grids/hexagons/"/>
     public class Location
     {
         private List<Location> _neighbors;
@@ -23,9 +27,7 @@ namespace YouTown
         }
 
         public int X { get; }
-
         public int Y { get; }
-
         public int Z { get; }
 
         public IList<Location> Neighbors
@@ -99,9 +101,7 @@ namespace YouTown
             return X == other.X && Y == other.Y && Z == other.Z;
         }
 
-        /// <summary>Determines whether the specified object is equal to the current object.</summary>
-        /// <returns>true if the specified object  is equal to the current object; otherwise, false.</returns>
-        /// <param name="obj">The object to compare with the current object. </param>
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -110,8 +110,7 @@ namespace YouTown
             return Equals((Location) obj);
         }
 
-        /// <summary>Serves as the default hash function. </summary>
-        /// <returns>A hash code for the current object.</returns>
+        /// <inheritdoc />
         public override int GetHashCode()
         {
              // Pack 3 ordinates x, y and z into one 32-bit positive int
@@ -123,8 +122,7 @@ namespace YouTown
             return _hashCode;
         }
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"X: {X}, Y: {Y}, Z: {Z}";

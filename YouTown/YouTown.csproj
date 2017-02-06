@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="City.cs" />
+    <Compile Include="GameAction\BuildCity.cs" />
     <Compile Include="GameAction\BuyDevelopmentCard.cs" />
     <Compile Include="GameAction\IGameAction.cs" />
     <Compile Include="IServerGame.cs" />

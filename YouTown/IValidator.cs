@@ -36,24 +36,67 @@ namespace YouTown
     /// </summary>
     public class ValidateAll
     {
-        private Dictionary<IValidator, object> _valueByValidator = new Dictionary<IValidator, object>();
+        private class ValidatorValue
+        {
+            public IValidator Validator { get; set; }
+            public object Value1 { get; set; }
+            public object Value2 { get; set; }
+            public string Text { get; set; }
+        }
 
-        public ValidateAll With<TValidator>(object value)
+        private List<ValidatorValue> _validatorValues = new List<ValidatorValue>();
+
+
+        public ValidateAll WithObject<TValidator>(object value, string text = null)
             where TValidator : IValidator, new()
         {
-            var validator = new TValidator();
-            _valueByValidator[validator] = value;
+            var validatorValue = new ValidatorValue
+            {
+                Validator = new TValidator(),
+                Value1 = value,
+                Text = text
+            };
+            _validatorValues.Add(validatorValue);
+            return this;
+        }
+
+        public ValidateAll With<TValidator, TValue>(TValue value, string text = null)
+            where TValidator : IValidator, new()
+        {
+            var validatorValue = new ValidatorValue
+            {
+                Validator = new TValidator(),
+                Value1 = value,
+                Text = text
+            };
+            _validatorValues.Add(validatorValue);
+            return this;
+        }
+
+        public ValidateAll With<TValidator, TValue1, TValue2>(TValue1 value1, TValue2 value2, string text = null)
+            where TValidator : IValidator, new()
+        {
+            var validatorValue = new ValidatorValue
+            {
+                Validator = new TValidator(),
+                Value1 = value1,
+                Value2 = value2,
+                Text = text
+            };
+            _validatorValues.Add(validatorValue);
             return this;
         }
 
         public IValidationResult Validate()
         {
             var invalidDescriptions = new List<string>();
-            foreach (KeyValuePair<IValidator, object> pair in _valueByValidator)
+            foreach (ValidatorValue validatorValue in _validatorValues)
             {
-                var validator = pair.Key;
-                var value = pair.Value;
-                var result = validator.Validate(value);
+                var validator = validatorValue.Validator;
+                var value1 = validatorValue.Value1;
+                var value2 = validatorValue.Value1;
+                var text = validatorValue.Text;
+                var result = validator.Validate(value1, value2, text);
                 if (!result.IsValid)
                 {
                     invalidDescriptions.Add(result.InvalidDescription);
@@ -74,38 +117,71 @@ namespace YouTown
     /// </summary>
     public interface IValidator
     {
-        IValidationResult Validate(object toValidate);
+        IValidationResult Validate(object value1, object value2 = null, string text = null);
     }
 
     /// <summary>
     /// Actual validation of a value of given generic type
     /// </summary>
-    /// <typeparam name="T">Type of value to validate</typeparam>
-    public interface IValidator<in T> : IValidator
+    /// <typeparam name="TValue">Type of value to validate</typeparam>
+    public interface IValidator<in TValue> : IValidator
     {
-        IValidationResult Validate(T toValidate);
+        IValidationResult Validate(TValue toValidate, string text = null);
+    }
+
+    /// <summary>
+    /// Actual validation of a value of given generic type
+    /// </summary>
+    /// <typeparam name="TValue1"></typeparam>
+    /// <typeparam name="TValue2"></typeparam>
+    public interface IValidator<in TValue1, in TValue2> : IValidator
+        where TValue1 : class
+        where TValue2 : class
+    {
+        IValidationResult Validate(TValue1 value1, TValue2 value2 = null, string text = null);
     }
 
     /// <summary>
     /// Used to prevent boilerplat implementation of non-generic <see cref="IValidator"/> type
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class ValidatorBase<T> : IValidator<T>
+    /// <typeparam name="TValue"></typeparam>
+    public abstract class ValidatorBase<TValue> : IValidator<TValue>
     {
-        public virtual IValidationResult Validate(T player)
+        public virtual IValidationResult Validate(TValue player, string text = null)
         {
             throw new NotImplementedException();
         }
 
-        public IValidationResult Validate(object toValidate)
+        public IValidationResult Validate(object value1, object value2 = null, string text = null)
         {
-            return Validate((T)toValidate);
+            return Validate((TValue)value1, text: text);
+        }
+    }
+
+    /// <summary>
+    /// Used to prevent boilerplat implementation of non-generic <see cref="IValidator"/> type
+    /// </summary>
+    /// <typeparam name="TValue1"></typeparam>
+    /// <typeparam name="TValue2"></typeparam>
+    public abstract class ValidatorBase<TValue1, TValue2> : IValidator<TValue1, TValue2>
+        where TValue1 : class
+        where TValue2 : class
+    {
+
+        public virtual IValidationResult Validate(TValue1 value1, TValue2 value2 = null, string text = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IValidationResult Validate(object value1, object value2 = null, string text = null)
+        {
+            return Validate((TValue1)value1, (TValue2)value2, text);
         }
     }
 
     public class HasCityInStock : ValidatorBase<IPlayer>
     {
-        public override IValidationResult Validate(IPlayer player)
+        public override IValidationResult Validate(IPlayer player, string text = null)
         {
             if (!player.Stock[City.CityType].Any())
             {
@@ -117,7 +193,7 @@ namespace YouTown
 
     public class IsOnTurn : ValidatorBase<IPlayer>
     {
-        public override IValidationResult Validate(IPlayer player)
+        public override IValidationResult Validate(IPlayer player, string text = null)
         {
             if (!player.IsOnTurn)
             {
@@ -129,26 +205,48 @@ namespace YouTown
 
     public class NotEmpty : ValidatorBase<IList>
     {
-        public override IValidationResult Validate(IList list)
+        public override IValidationResult Validate(IList list, string listName)
         {
             if (list.Count == 0)
             {
-                // TODO: specify name of the list
-                return new Invalid("list is empty");
+                return new Invalid($"list {listName} is empty");
             }
             return Validator.Valid;
         }
     }
 
-    public class CanPayPiece : ValidatorBase<Tuple<IPlayer, IPiece>>
+    public class CanPayPiece : ValidatorBase<IPlayer, IPiece>
     {
-        public override IValidationResult Validate(Tuple<IPlayer, IPiece> pair)
+        public override IValidationResult Validate(IPlayer player, IPiece piece, string text = null)
         {
-            var player = pair.Item1;
-            var piece = pair.Item2;
             if (!player.Hand.HasAtLeast(piece.Cost))
             {
                 return new Invalid($"player {player.User.Name} does not have enough resources to pay for a {piece.PieceType}");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class NotNull : IValidator
+    {
+        public IValidationResult Validate(object value1, object value2 = null, string objectName = null)
+        {
+            if (value1 == null)
+            {
+                return new Invalid($"object {objectName} cannot be null");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class HasTownAt : ValidatorBase<IPlayer, Point>
+    {
+        public override IValidationResult Validate(IPlayer player, Point point, string text = null)
+        {
+            if (player.PointPieces.ContainsKey(point))
+            {
+                // TODO: have nicer description of location e.g. "3ore, 9wheat, 6clay"
+                return new Invalid($"player {player.User.Name} does not have a town at {point}");
             }
             return Validator.Valid;
         }

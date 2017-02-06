@@ -26,9 +26,9 @@ namespace YouTown.GameAction
 
         public IValidationResult Validate(IGame game) =>
             new ValidateAll()
-                .With<IsOnTurn>(Player)
-                .With<NotEmpty>(game.Bank.DevelopmentCards)
-                .With<CanPayPiece>(Tuple.Create(Player, DevelopmentCard))
+                .With<IsOnTurn, IPlayer>(Player)
+                .WithObject<NotEmpty>(game.Bank.DevelopmentCards, "bank development cards")
+                .With<CanPayPiece, IPlayer, IPiece>(Player, DevelopmentCard)
                 .Validate();
 
         public void PerformAtServer(IServerGame serverGame)
@@ -42,7 +42,7 @@ namespace YouTown.GameAction
         {
             var developmentCard = game.Bank.DevelopmentCards.Last();
             game.Bank.DevelopmentCards.Remove(developmentCard);
-            Player.DevelopmentCards.Add(developmentCard);
+            developmentCard.AddToPlayer(Player);
             IResourceList cost = new DevelopmentCardCost();
             Player.LooseResourcesTo(game.Bank.Resources, cost, this);
             developmentCard.TurnBought = game.PlayTurns.Turn;
