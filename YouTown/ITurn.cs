@@ -10,6 +10,11 @@
         //List<ITrade> Trades { get; }
     }
 
+    public interface IPlayTurnsTurn : ITurn
+    {
+        bool HasPlayedDevelopmentCard { get; set; }
+    }
+
     public class Turn : ITurn
     {
         /// <summary>

@@ -98,12 +98,12 @@ namespace YouTown
 
         public PlayTurns()
         {
-            Turns = new List<ITurn>();
+            Turns = new List<IPlayTurnsTurn>();
             TurnPhase = _beforeDiceRoll;
         }
         public override bool IsTurns => true;
-        public IList<ITurn> Turns { get; }
-        public ITurn Turn { get; }
+        public IList<IPlayTurnsTurn> Turns { get; }
+        public IPlayTurnsTurn Turn { get; }
         public ITurnPhase TurnPhase { get; private set; }
 
         public void Start(IGame game)

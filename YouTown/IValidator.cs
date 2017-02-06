@@ -272,4 +272,30 @@ namespace YouTown
             return Validator.Valid;
         }
     }
+
+    public class WaitedOneTurn : ValidatorBase<IDevelopmentCard, ITurn>
+    {
+        public override IValidationResult Validate(IDevelopmentCard developmentCard, ITurn turn, string text = null)
+        {
+            int turnNumber = turn.Number;
+            int boughtTurnNumber = developmentCard.TurnBought.Number;
+            if (boughtTurnNumber >= turnNumber)
+            {
+                return new Invalid($"developmentcard {developmentCard} is bought in turn {boughtTurnNumber} but played in {turnNumber}");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class NotYetPlayedDevelopmentCard : ValidatorBase<IPlayTurnsTurn, IDevelopmentCard>
+    {
+        public override IValidationResult Validate(IPlayTurnsTurn turn, IDevelopmentCard developmentCard, string text = null)
+        {
+            if (developmentCard.MaxOnePerTurn && turn.HasPlayedDevelopmentCard)
+            {
+                return new Invalid($"turn {turn.Number} already has one development card played");
+            }
+            return Validator.Valid;
+        }
+    }
 }
