@@ -6,5 +6,6 @@ namespace YouTown
     {
         IList<IDevelopmentCard> DevelopmentCards { get; }
         IDictionary<IPlayer, IList<IDevelopmentCard>> DevelopmentCardsByPlayer { get; }
+        IRandom Random { get; }
     }
 }

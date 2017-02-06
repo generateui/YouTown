@@ -20,7 +20,7 @@ namespace YouTown
 
     public static class RandomExtensions
     {
-        public static T PickRandom<T>(this IList<T> list, IRandom random)
+        public static T PickRandom<T>(this IReadOnlyList<T> list, IRandom random)
         {
             if (!list.Any())
             {

@@ -47,6 +47,7 @@
     <Compile Include="GameAction\LooseCards.cs" />
     <Compile Include="GameAction\MoveRobber.cs" />
     <Compile Include="GameAction\PlayDevelopmentCard.cs" />
+    <Compile Include="GameAction\RobPlayer.cs" />
     <Compile Include="IServerGame.cs" />
     <Compile Include="IBank.cs" />
     <Compile Include="IBoard.cs" />

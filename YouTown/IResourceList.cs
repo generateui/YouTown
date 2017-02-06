@@ -10,19 +10,18 @@ namespace YouTown
     /// When iterating over a resourcelist, it yields <see cref="IResource"/> instances
     /// in semi-determinate order of timber, wheat, sheep, clay, ore, other (indeterminate).
     /// TODO: Have grouporder extensible
-    public interface IResourceList : IEnumerable<IResource>
+    public interface IResourceList : IReadOnlyList<IResource>
     {
         bool HasType(ResourceType resourceType);
         IResourceList OfType(ResourceType resourceType);
         /// <summary>
-        /// Currently indterminate order 
+        /// Currently indeterminate order 
         /// </summary>
         /// TODO: should be have this conform to resourcetype order as well?
         IEnumerable<ResourceType> ResourceTypes { get; }
         string ToSummary();
         int HalfCount(); // TODO: pass in IHalfCountStrategy
         bool HasAtLeast(IResourceList what);
-        int Count();
     }
 
     public class ResourceList : IResourceList
@@ -42,6 +41,11 @@ namespace YouTown
         }
 
         public ResourceList() { }
+
+        public ResourceList(IResource resource)
+        {
+            AddSafe(resource);
+        }
 
         protected void AddSafe(IResource resource)
         {
@@ -125,11 +129,6 @@ namespace YouTown
             return true;
         }
 
-        public int Count()
-        {
-            return _resources.SelectMany(kvp => kvp.Value).Count();
-        }
-
         private IEnumerable<IResource> CreateEnumerator()
         {
             var unorderedTypes = _resources.Keys
@@ -177,7 +176,7 @@ namespace YouTown
         /// <returns></returns>
         public bool EqualsResources(ResourceList other)
         {
-            if (Count() != other.Count())
+            if (Count != other.Count)
             {
                 return false;
             }
@@ -202,5 +201,11 @@ namespace YouTown
             return true;
         }
 
+        /// <inheritdoc />
+        public int Count => _resources.SelectMany(kvp => kvp.Value).Count();
+
+        /// <inheritdoc />
+        /// TODO: this is horribly inefficient given some call patterns
+        public IResource this[int index] => _resources.SelectMany(kvp => kvp.Value).ToList()[index];
     }
 }

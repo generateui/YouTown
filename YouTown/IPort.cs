@@ -55,7 +55,7 @@ namespace YouTown
             {
                 return 0;
             }
-            return resources.OfType(resourceType).Count() / InAmount;
+            return resources.OfType(resourceType).Count / InAmount;
         }
 
         public virtual bool CanTrade(ResourceType resourceType)

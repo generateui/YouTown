@@ -24,7 +24,7 @@
             new ValidateAll()
                 .WithObject<NotNull>(ResourcesToLoose)
                 .With<HasResources, IPlayer, IResourceList>(Player, ResourcesToLoose)
-                .With<LoosesCorrectAmount, IPlayer, int>(Player, ResourcesToLoose.Count())
+                .With<LoosesCorrectAmount, IPlayer, int>(Player, ResourcesToLoose.Count)
                 .Validate();
 
         public void PerformAtServer(IServerGame serverGame)
