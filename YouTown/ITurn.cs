@@ -1,4 +1,6 @@
-﻿namespace YouTown
+﻿using System.Collections.Generic;
+
+namespace YouTown
 {
     public interface ITurn : IGameItem
     {

@@ -1,4 +1,6 @@
-﻿namespace YouTown.GameAction
+﻿using YouTown.Validator;
+
+namespace YouTown.GameAction
 {
     public interface IGameAction : IGameItem
     {

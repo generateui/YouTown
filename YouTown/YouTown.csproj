@@ -72,7 +72,14 @@
     <Compile Include="ITurn.cs" />
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
-    <Compile Include="IValidator.cs" />
+    <Compile Include="Validator\CanPayPiece.cs" />
+    <Compile Include="Validator\CanPlaceRobberAt.cs" />
+    <Compile Include="Validator\HasCityInStock.cs" />
+    <Compile Include="Validator\HasHexAt.cs" />
+    <Compile Include="Validator\HasResources.cs" />
+    <Compile Include="Validator\HasTownAt.cs" />
+    <Compile Include="Validator\IsOnTurn.cs" />
+    <Compile Include="Validator\IValidator.cs" />
     <Compile Include="LargestArmy.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Point.cs" />
@@ -81,6 +88,11 @@
     <Compile Include="Road.cs" />
     <Compile Include="Robber.cs" />
     <Compile Include="Town.cs" />
+    <Compile Include="Validator\LoosesCorrectAmount.cs" />
+    <Compile Include="Validator\NotEmpty.cs" />
+    <Compile Include="Validator\NotNull.cs" />
+    <Compile Include="Validator\NotYetPlayedDevelopmentCard.cs" />
+    <Compile Include="Validator\WaitedOneTurn.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
