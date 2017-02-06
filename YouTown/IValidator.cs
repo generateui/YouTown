@@ -135,10 +135,8 @@ namespace YouTown
     /// <typeparam name="TValue1"></typeparam>
     /// <typeparam name="TValue2"></typeparam>
     public interface IValidator<in TValue1, in TValue2> : IValidator
-        where TValue1 : class
-        where TValue2 : class
     {
-        IValidationResult Validate(TValue1 value1, TValue2 value2 = null, string text = null);
+        IValidationResult Validate(TValue1 player, TValue2 value2 = default(TValue2), string text = null);
     }
 
     /// <summary>
@@ -164,11 +162,9 @@ namespace YouTown
     /// <typeparam name="TValue1"></typeparam>
     /// <typeparam name="TValue2"></typeparam>
     public abstract class ValidatorBase<TValue1, TValue2> : IValidator<TValue1, TValue2>
-        where TValue1 : class
-        where TValue2 : class
     {
 
-        public virtual IValidationResult Validate(TValue1 value1, TValue2 value2 = null, string text = null)
+        public virtual IValidationResult Validate(TValue1 player, TValue2 value2 = default(TValue2), string text = null)
         {
             throw new NotImplementedException();
         }
@@ -247,6 +243,31 @@ namespace YouTown
             {
                 // TODO: have nicer description of location e.g. "3ore, 9wheat, 6clay"
                 return new Invalid($"player {player.User.Name} does not have a town at {point}");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class HasResources : ValidatorBase<IPlayer, IResourceList>
+    {
+        public override IValidationResult Validate(IPlayer player, IResourceList resources, string text = null)
+        {
+            if (!player.Hand.HasAtLeast(resources))
+            {
+                return new Invalid($"player {player.User.Name} does not have given resources: {resources}");
+            }
+            return Validator.Valid;
+        }
+    }
+
+    public class LoosesCorrectAmount : ValidatorBase<IPlayer, Int32>
+    {
+        public override IValidationResult Validate(IPlayer player, int amount, string text = null)
+        {
+            var amountToLoose = player.Hand.HalfCount();
+            if (amountToLoose != amount)
+            {
+                return new Invalid($"player {player.User.Name} is expected to loose {amountToLoose} but wants to loose {amount}");
             }
             return Validator.Valid;
         }

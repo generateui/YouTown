@@ -51,6 +51,5 @@ namespace YouTown.GameAction
             Turn = game.PlayTurns.Turn;
         }
 
-
     }
 }

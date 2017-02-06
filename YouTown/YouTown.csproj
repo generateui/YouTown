@@ -44,6 +44,7 @@
     <Compile Include="GameAction\BuildCity.cs" />
     <Compile Include="GameAction\BuyDevelopmentCard.cs" />
     <Compile Include="GameAction\IGameAction.cs" />
+    <Compile Include="GameAction\LooseCards.cs" />
     <Compile Include="IServerGame.cs" />
     <Compile Include="IBank.cs" />
     <Compile Include="IBoard.cs" />
