@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class HasCityInStock : ValidatorBase<IPlayer>
     {

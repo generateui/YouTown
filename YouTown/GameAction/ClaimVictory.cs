@@ -1,4 +1,4 @@
-﻿using YouTown.Validator;
+﻿using YouTown.Validation;
 
 namespace YouTown.GameAction
 {

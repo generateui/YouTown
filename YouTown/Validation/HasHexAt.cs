@@ -1,4 +1,4 @@
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class HasHexAt : ValidatorBase<IBoard, Location>
     {

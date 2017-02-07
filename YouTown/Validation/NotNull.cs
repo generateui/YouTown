@@ -1,4 +1,4 @@
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class NotNull : IValidator
     {
@@ -8,7 +8,7 @@ namespace YouTown.Validator
             {
                 return new Invalid($"object {objectName} cannot be null");
             }
-            return Validator.Valid;
+            return Validation.Validator.Valid;
         }
     }
 }

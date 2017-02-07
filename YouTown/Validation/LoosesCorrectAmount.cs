@@ -1,5 +1,4 @@
-
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class LoosesCorrectAmount : ValidatorBase<IPlayer, int>
     {
@@ -10,7 +9,7 @@ namespace YouTown.Validator
             {
                 return new Invalid($"player {player.User.Name} is expected to loose {amountToLoose} but wants to loose {amount}");
             }
-            return Validator.Valid;
+            return Validation.Validator.Valid;
         }
     }
 }

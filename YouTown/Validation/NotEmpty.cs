@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class NotEmpty : ValidatorBase<IList>
     {
@@ -10,7 +10,7 @@ namespace YouTown.Validator
             {
                 return new Invalid($"list {listName} is empty");
             }
-            return Validator.Valid;
+            return Validation.Validator.Valid;
         }
     }
 }

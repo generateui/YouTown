@@ -1,4 +1,4 @@
-namespace YouTown.Validator
+namespace YouTown.Validation
 {
     public class NotYetPlayedDevelopmentCard : ValidatorBase<IPlayTurnsTurn, IDevelopmentCard>
     {
@@ -8,7 +8,7 @@ namespace YouTown.Validator
             {
                 return new Invalid($"turn {turn.Number} already has one development card played");
             }
-            return Validator.Valid;
+            return Validation.Validator.Valid;
         }
     }
 }

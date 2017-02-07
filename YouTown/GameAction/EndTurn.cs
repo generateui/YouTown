@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using YouTown.Validator;
+using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
@@ -21,7 +21,7 @@ namespace YouTown.GameAction
         public bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
         public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game) => Validator.Validator.Valid;
+        public IValidationResult Validate(IGame game) => Validator.Valid;
 
         public void PerformAtServer(IServerGame serverGame)
         {

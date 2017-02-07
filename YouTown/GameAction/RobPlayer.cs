@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using YouTown.Validator;
+using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
