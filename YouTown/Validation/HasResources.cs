@@ -1,12 +1,12 @@
 namespace YouTown.Validation
 {
-    public class HasResources : ValidatorBase<IPlayer, IResourceList>
+    public class HasResources : ValidatorBase<IResourceList, IResourceList>
     {
-        public override IValidationResult Validate(IPlayer player, IResourceList resources, string text = null)
+        public override IValidationResult Validate(IResourceList resources, IResourceList minimum, string name = null)
         {
-            if (!player.Hand.HasAtLeast(resources))
+            if (!resources.HasAtLeast(minimum))
             {
-                return new Invalid($"player {player.User.Name} does not have given resources: {resources}");
+                return new Invalid($"player {name} does not have given resources: {resources}");
             }
             return Validator.Valid;
         }
