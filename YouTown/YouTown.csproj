@@ -52,6 +52,7 @@
     <Compile Include="GameAction\IGameAction.cs" />
     <Compile Include="GameAction\LooseCards.cs" />
     <Compile Include="GameAction\MoveRobber.cs" />
+    <Compile Include="GameAction\OfferTrade.cs" />
     <Compile Include="GameAction\PlayDevelopmentCard.cs" />
     <Compile Include="GameAction\RobPlayer.cs" />
     <Compile Include="GameAction\RollDice.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="Produce.cs" />
+    <Compile Include="TradeOffer.cs" />
     <Compile Include="Validation\CanBuildRoadAt.cs" />
     <Compile Include="Validation\CanBuildTownAt.cs" />
     <Compile Include="Validation\CanPayPiece.cs" />

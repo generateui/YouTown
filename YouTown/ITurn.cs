@@ -8,38 +8,43 @@ namespace YouTown
         /// Consecutive 1-based number of the turn within a game
         /// </summary>
         int Number { get; }
-        //Player Player { get; }
-        //List<ITrade> Trades { get; }
+        IPlayer Player { get; }
     }
 
     public interface IPlayTurnsTurn : ITurn
     {
         bool HasPlayedDevelopmentCard { get; set; }
+        IList<TradeOffer> TradeOffers { get; }
     }
 
     public class PlaceTurn : ITurn
     {
-        public PlaceTurn(int id, int number)
+        public PlaceTurn(int id, int number, IPlayer player)
         {
             Id = id;
             Number = number;
+            Player = player;
         }
 
         public int Id { get; }
         public int Number { get; }
+        public IPlayer Player { get; }
     }
 
     public class PlayTurnsTurn : IPlayTurnsTurn
     {
-        public PlayTurnsTurn(int id, int number)
+        public PlayTurnsTurn(int id, int number, IPlayer player)
         {
             Id = id;
             Number = number;
+            Player = player;
         }
 
         public int Id { get; }
         public int Number { get; }
+        public IPlayer Player { get; }
         public bool HasPlayedDevelopmentCard { get; set; }
+        public IList<TradeOffer> TradeOffers { get; } = new List<TradeOffer>();
 
         protected bool Equals(PlayTurnsTurn other)
         {
