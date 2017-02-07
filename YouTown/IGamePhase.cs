@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace YouTown
 {
@@ -7,8 +8,9 @@ namespace YouTown
         void Start(IGame game);
         void End(IGame game);
 //        void RollDice()
-//buildtown
-//buildroad
+
+        void BuildTown(IGame game, IPlayer player, Town town);
+        void BuildRoad(IGame game, IPlayer player, Road road);
         bool IsSetup { get; }
         bool IsDetermineFirstPlayer { get; }
         bool IsInitialPlacement { get; }
@@ -23,6 +25,14 @@ namespace YouTown
         public virtual bool IsInitialPlacement => false;
         public virtual bool IsTurns => false;
         public virtual bool IsEnd => false;
+
+        public virtual void BuildTown(IGame game, IPlayer player, Town town)
+        {
+        }
+
+        public virtual void BuildRoad(IGame game, IPlayer player, Road road)
+        {
+        }
     }
 
     /// <summary>
@@ -76,13 +86,69 @@ namespace YouTown
     public class PlaceInitialPieces : GamePhaseBase, IGamePhase
     {
         public override bool IsInitialPlacement => true;
+        private List<PlaceTurn> _turns = new List<PlaceTurn>();
+        private IPlayer _playerOnTurn;
+        private int _roadsBuilt;
 
         public void Start(IGame game)
         {
+            _playerOnTurn = game.Players.First();
+            _playerOnTurn.IsOnTurn = true;
         }
 
         public void End(IGame game)
         {
+        }
+
+        public override void BuildRoad(IGame game, IPlayer player, Road road)
+        {
+            _roadsBuilt++;
+            bool to = _roadsBuilt < game.Players.Count;
+            bool halfway = _roadsBuilt == game.Players.Count;
+            bool back = _roadsBuilt > game.Players.Count;
+            _playerOnTurn.IsOnTurn = false;
+            if (to)
+            {
+                var index = game.Players.IndexOf(_playerOnTurn) + 1;
+                _playerOnTurn = game.Players[index];
+            } else if (halfway)
+            {
+                // nothing, player stays "on turn"
+            } else if (back && _playerOnTurn.Equals(game.Players.First()))
+            {
+                // nothing, player stays "on turn"
+            }
+            else
+            {
+                var index = game.Players.IndexOf(_playerOnTurn) - 1;
+                _playerOnTurn = game.Players[index];
+            }
+            _playerOnTurn.IsOnTurn = true;
+            int expectedAmountRoadsBuilt = game.Players.Count * 2;
+            if (_roadsBuilt == expectedAmountRoadsBuilt)
+            {
+                game.MoveToNextPhase();
+            }
+        }
+
+        public override void BuildTown(IGame game, IPlayer player, Town town)
+        {
+            if (player.Towns.Count != 1)
+            {
+                return;
+            }
+            var resourcesGained = new List<IResource>();
+            foreach (Location location in town.Point.Locations)
+            {
+                IHex hex = game.Board.HexesByLocation[location];
+                IResource resource = hex.Produce();
+                if (resource != null)
+                {
+                    resourcesGained.Add(resource);
+                }
+            }
+            player.GainResourcesFrom(game.Bank.Resources, new ResourceList(resourcesGained), null);
+            // TODO: indicate to all players what resources this player gained
         }
     }
 

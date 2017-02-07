@@ -2,7 +2,7 @@
 
 namespace YouTown.Validator
 {
-    public class HasRoadTo : ValidatorBase<Point, IPlayer>
+    public class HasRoadToPoint : ValidatorBase<Point, IPlayer>
     {
         public override IValidationResult Validate(Point point, IPlayer player, string text = null)
         {

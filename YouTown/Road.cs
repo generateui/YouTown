@@ -21,7 +21,7 @@
 
         public IPlayer Player { get; }
         public int Id { get; }
-        public Edge Edge { get; }
+        public Edge Edge { get; set;  }
         public PieceType PieceType => RoadType;
         public bool AffectsRoad => true;
         public IResourceList Cost => new RoadCost();

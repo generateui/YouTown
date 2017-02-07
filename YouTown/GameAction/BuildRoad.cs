@@ -3,13 +3,13 @@ using YouTown.Validator;
 
 namespace YouTown.GameAction
 {
-    public class BuildTown : IGameAction
+    public class BuildRoad : IGameAction
     {
-        public BuildTown(int id, IPlayer player, Point point)
+        public BuildRoad(int id, IPlayer player, Edge edge)
         {
             Id = id;
             Player = player;
-            Point = point;
+            Edge = edge;
         }
 
         public int Id { get; }
@@ -17,20 +17,20 @@ namespace YouTown.GameAction
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }
         public ITurn Turn { get; private set; }
+        public Edge Edge { get; }
         public bool IsAllowedInOpponentTurn => false;
-        public Point Point { get; }
 
         public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
         public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns || gp.IsInitialPlacement;
 
         public IValidationResult Validate(IGame game) =>
             new ValidateAll()
-                .WithObject<NotNull>(Point)
-                .With<HasTownInStock, IPlayer>(Player)
-//                .With<TownAllowedWhenInitialPlacement>(game.GamePhase) TODO: implement
+                .WithObject<NotNull>(Edge)
+                .With<HasRoadInStock, IPlayer>(Player)
+                //                .With<RoadAllowedWhenInitialPlacement>(game.GamePhase) TODO: implement
                 .With<IsOnTurn, IPlayer>(Player)
-                .With<CanBuildTownAt, Point, IBoard>(Point, game.Board)
-                .With<HasRoadToPoint, Point, IPlayer>(Point, Player)
+                .With<CanBuildRoadAt, Edge, IBoard>(Edge, game.Board)
+                .With<HasRoadOrTownToEdge, Edge, IPlayer>(Edge, Player)
                 .Validate();
 
         public void PerformAtServer(IServerGame serverGame)
@@ -39,18 +39,12 @@ namespace YouTown.GameAction
 
         public void Perform(IGame game)
         {
-            var town = Player.Stock[Town.TownType].Last() as Town;
-            game.GamePhase.BuildTown(game, Player, town);
-            town.Point = Point;
-            town.AddToPlayer(Player);
-            town.AddToBoard(game.Board);
-            var matchingHexWithPort = game.Board.HexesByLocation.Values
-                .Where(h => h.Port != null)
-                .FirstOrDefault(h => h.Port.Edge.Points.Contains(Point));
-            if (matchingHexWithPort != null)
-            {
-                Player.Ports.Ports.Add(matchingHexWithPort.Port);
-            }
+            var road = Player.Stock[Road.RoadType].Last() as Road;
+            road.Edge = Edge;
+            road.AddToPlayer(Player);
+            road.AddToBoard(game.Board);
+            game.GamePhase.BuildRoad(game, Player, road);
+            //            game.MoveLongestRoadIfNeeded(); TODO: implement
 
             TurnPhase = game.PlayTurns.TurnPhase;
             GamePhase = game.GamePhase;

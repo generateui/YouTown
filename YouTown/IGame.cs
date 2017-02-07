@@ -15,5 +15,6 @@ namespace YouTown
         PlaceInitialPieces PlaceInitialPieces { get; }
         PlayTurns PlayTurns { get; }
         EndOfGame EndOfGame { get; }
+        void MoveToNextPhase();
     }
 }

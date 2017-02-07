@@ -17,6 +17,18 @@ namespace YouTown
         bool HasPlayedDevelopmentCard { get; set; }
     }
 
+    public class PlaceTurn : ITurn
+    {
+        public PlaceTurn(int id, int number)
+        {
+            Id = id;
+            Number = number;
+        }
+
+        public int Id { get; }
+        public int Number { get; }
+    }
+
     public class Turn : ITurn
     {
         /// <summary>
