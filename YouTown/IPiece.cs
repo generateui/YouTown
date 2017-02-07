@@ -57,7 +57,9 @@
     /// </summary>
     public interface IProducer
     {
+        IPlayer Player { get; }
         IResourceList Produce(IHex hex);
+        bool IsAt(Location location);
     }
 
     /// <summary>

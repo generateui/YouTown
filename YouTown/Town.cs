@@ -1,6 +1,6 @@
 ﻿namespace YouTown
 {
-    public class Town : IPiece, IPointPiece, IVictoryPoint
+    public class Town : IPiece, IPointPiece, IVictoryPoint, IProducer
     {
         public class TownCost : ResourceList
         {
@@ -25,6 +25,13 @@
         public IResourceList Cost => new TownCost();
         public int VictoryPoints => 1;
 
+        public bool IsAt(Location location) => Point.Locations.Contains(location);
+
+        public IResourceList Produce(IHex hex)
+        {
+            return new ResourceList(hex.Produce());
+        }
+
         public void AddToPlayer(IPlayer player)
         {
             player.Towns[Point] = this;
@@ -32,7 +39,7 @@
             player.Stock[TownType].Remove(this);
             player.VictoryPoints.Add(this);
             player.PointPieces[Point].Add(this);
-            // TODO: IProducer
+            player.Producers.Add(this);
         }
 
         public void RemoveFromPlayer(IPlayer player)
@@ -42,7 +49,7 @@
             player.Stock[TownType].Add(this);
             player.VictoryPoints.Remove(this);
             player.PointPieces[Point].Remove(this);
-            // TODO: IProducer
+            player.Producers.Remove(this);
         }
 
         public void AddToBoard(IBoard board)
@@ -50,6 +57,7 @@
             board.TownsByPoint[Point] = this;
             board.PiecesByPoint[Point] = this;
             board.Pieces.Add(this);
+            board.Producers.Add(this);
         }
 
         public void RemoveFromBoard(IBoard board)
@@ -57,6 +65,8 @@
             board.TownsByPoint.Remove(Point);
             board.PiecesByPoint.Remove(Point);
             board.Pieces.Remove(this);
+            board.Producers.Remove(this);
         }
+
     }
 }

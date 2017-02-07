@@ -10,6 +10,7 @@ namespace YouTown
         int TotalVictoryPoints { get; }
 
         ISet<IPiece> Pieces { get; }
+        ISet<IProducer> Producers { get; }
         IDictionary<Edge, IList<IEdgePiece>> EdgePieces { get; }
         IDictionary<Point, IList<IPointPiece>> PointPieces { get; }
 

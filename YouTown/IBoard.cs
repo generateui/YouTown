@@ -12,6 +12,7 @@ namespace YouTown
         IDictionary<Point, City> CitiesByPoint { get; }
         IDictionary<Point, IPointPiece> PiecesByPoint { get; } 
         IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
+        ISet<IProducer> Producers { get; }
         ISet<IPiece> Pieces { get; }
         Robber Robber { get; } // TODO: does this belong to IGame or IBoard?
 
@@ -116,6 +117,7 @@ namespace YouTown
             }
         }
 
+        public ISet<IProducer> Producers { get; }
         public ISet<IPiece> Pieces { get; }
         public Robber Robber { get; }
         public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;

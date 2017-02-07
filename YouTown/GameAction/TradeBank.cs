@@ -27,7 +27,9 @@ namespace YouTown.GameAction
         public IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(OfferedToBank)
+                .WithObject<NotEmpty>(OfferedToBank)
                 .WithObject<NotNull>(RequestedFromBank)
+                .WithObject<NotEmpty>(RequestedFromBank)
                 .With<HasResources, IResourceList, IResourceList>(Player.Hand, OfferedToBank, Player.User.Name)
                 .With<HasResources, IResourceList, IResourceList>(game.Bank.Resources, RequestedFromBank, "bank")
                 .With<IsCorrectBankTrade, Tuple<IPortList, IResourceList, IResourceList>>(

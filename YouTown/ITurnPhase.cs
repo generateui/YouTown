@@ -20,7 +20,7 @@
     {
         public override bool IsBeforeDiceRoll => true;
     }
-    public class DiceRoll : TurnPhaseBase, ITurnPhase
+    public class RollDicePhase : TurnPhaseBase, ITurnPhase
     {
         public override bool IsDiceRoll => true;
     }

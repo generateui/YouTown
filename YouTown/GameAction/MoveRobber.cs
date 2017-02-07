@@ -4,6 +4,11 @@ namespace YouTown.GameAction
 {
     public class MoveRobber : IGameAction
     {
+        public MoveRobber(IPlayer player)
+        {
+            Player = player;
+        }
+
         public MoveRobber(int id, IPlayer player)
         {
             Id = id;

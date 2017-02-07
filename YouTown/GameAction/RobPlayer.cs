@@ -6,6 +6,10 @@ namespace YouTown.GameAction
 {
     public class RobPlayer : IGameAction
     {
+        public RobPlayer(IPlayer player)
+        {
+            Player = player;
+        }
         public RobPlayer(int id, IPlayer player, IPlayer opponent, IResource resource)
         {
             Id = id;

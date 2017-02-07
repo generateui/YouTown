@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Chat.cs" />
     <Compile Include="City.cs" />
+    <Compile Include="DiceRoll.cs" />
     <Compile Include="GameAction\BuildCity.cs" />
     <Compile Include="GameAction\BuildRoad.cs" />
     <Compile Include="GameAction\BuildTown.cs" />
@@ -53,8 +54,10 @@
     <Compile Include="GameAction\MoveRobber.cs" />
     <Compile Include="GameAction\PlayDevelopmentCard.cs" />
     <Compile Include="GameAction\RobPlayer.cs" />
+    <Compile Include="GameAction\RollDice.cs" />
     <Compile Include="GameAction\SaySomething.cs" />
     <Compile Include="GameAction\TradeBank.cs" />
+    <Compile Include="IActionQueue.cs" />
     <Compile Include="IServerGame.cs" />
     <Compile Include="IBank.cs" />
     <Compile Include="IBoard.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="ITurn.cs" />
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
+    <Compile Include="Produce.cs" />
     <Compile Include="Validation\CanBuildRoadAt.cs" />
     <Compile Include="Validation\CanBuildTownAt.cs" />
     <Compile Include="Validation\CanPayPiece.cs" />
