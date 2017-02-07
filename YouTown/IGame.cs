@@ -6,6 +6,7 @@ namespace YouTown
     {
         IBoard Board { get; }
         IGameOptions Options { get; }
+        IList<Chat> Chats { get; }
 
         IBank Bank { get; }
         IList<IPlayer> Players { get; }
