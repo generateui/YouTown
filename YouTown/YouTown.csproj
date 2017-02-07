@@ -54,6 +54,7 @@
     <Compile Include="GameAction\MoveRobber.cs" />
     <Compile Include="GameAction\OfferTrade.cs" />
     <Compile Include="GameAction\PlayDevelopmentCard.cs" />
+    <Compile Include="GameAction\RejectTradeOffer.cs" />
     <Compile Include="GameAction\RobPlayer.cs" />
     <Compile Include="GameAction\RollDice.cs" />
     <Compile Include="GameAction\SaySomething.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Validation\LoosesCorrectAmount.cs" />
     <Compile Include="Validation\NotEmpty.cs" />
     <Compile Include="Validation\NotNull.cs" />
+    <Compile Include="Validation\NotRespondedYet.cs" />
     <Compile Include="Validation\NotYetPlayedDevelopmentCard.cs" />
     <Compile Include="Validation\WaitedOneTurn.cs" />
   </ItemGroup>
