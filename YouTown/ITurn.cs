@@ -29,21 +29,21 @@ namespace YouTown
         public int Number { get; }
     }
 
-    public class Turn : ITurn
+    public class PlayTurnsTurn : IPlayTurnsTurn
     {
-        /// <summary>
-        /// Within the scope of a game an int is more then sufficient to identify an item
-        /// </summary>
-        public int Id { get; }
-
-        /// <summary>
-        /// Consecutive 1-based number of the turn within a game
-        /// </summary>
-        public int Number { get; }
-
-        protected bool Equals(Turn other)
+        public PlayTurnsTurn(int id, int number)
         {
-            return Id == other.Id && Number == other.Number;
+            Id = id;
+            Number = number;
+        }
+
+        public int Id { get; }
+        public int Number { get; }
+        public bool HasPlayedDevelopmentCard { get; set; }
+
+        protected bool Equals(PlayTurnsTurn other)
+        {
+            return Id == other.Id && Number == other.Number && HasPlayedDevelopmentCard;
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -54,7 +54,7 @@ namespace YouTown
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Turn) obj);
+            return Equals((PlayTurnsTurn) obj);
         }
 
         /// <summary>Serves as the default hash function. </summary>
@@ -63,7 +63,7 @@ namespace YouTown
         {
             unchecked
             {
-                return (Id*397) ^ Number;
+                return (Id*397) ^ Number ^ HasPlayedDevelopmentCard.GetHashCode();
             }
         }
     }

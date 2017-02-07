@@ -8,7 +8,6 @@ namespace YouTown
         void Start(IGame game);
         void End(IGame game);
 //        void RollDice()
-
         void BuildTown(IGame game, IPlayer player, Town town);
         void BuildRoad(IGame game, IPlayer player, Road road);
         bool IsSetup { get; }
@@ -169,7 +168,7 @@ namespace YouTown
         }
         public override bool IsTurns => true;
         public IList<IPlayTurnsTurn> Turns { get; }
-        public IPlayTurnsTurn Turn { get; }
+        public IPlayTurnsTurn Turn { get; private set; }
         public ITurnPhase TurnPhase { get; private set; }
 
         public void Start(IGame game)
@@ -210,6 +209,15 @@ namespace YouTown
             {
                 TurnPhase = _building;
             }
+        }
+
+
+        public void MoveToNextTurn(IIdentifier identifier)
+        {
+            var id = identifier.NewId();
+            var number = Turn.Number + 1;
+            var newTurn = new PlayTurnsTurn(id, number);
+            Turn = newTurn;
         }
     }
 

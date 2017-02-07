@@ -8,11 +8,11 @@ namespace YouTown.GameAction
         ITurnPhase TurnPhase { get; }
         IGamePhase GamePhase { get; }
         ITurn Turn { get; }
+        bool IsAllowedInOpponentTurn { get; }
+        bool IsAllowedInTurnPhase(ITurnPhase turnPhase);
+        bool IsAllowedInGamePhase(IGamePhase gamePhase);
         IValidationResult Validate(IGame game);
         void PerformAtServer(IServerGame serverGame);
         void Perform(IGame game);
-        bool IsAllowedInTurnPhase(ITurnPhase turnPhase);
-        bool IsAllowedInGamePhase(IGamePhase gamePhase);
-        bool IsAllowedInOpponentTurn { get; }
     }
 }

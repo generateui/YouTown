@@ -46,6 +46,7 @@
     <Compile Include="GameAction\BuildTown.cs" />
     <Compile Include="GameAction\BuyDevelopmentCard.cs" />
     <Compile Include="GameAction\ClaimVictory.cs" />
+    <Compile Include="GameAction\EndTurn.cs" />
     <Compile Include="GameAction\IGameAction.cs" />
     <Compile Include="GameAction\LooseCards.cs" />
     <Compile Include="GameAction\MoveRobber.cs" />
