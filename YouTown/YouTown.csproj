@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="City.cs" />
     <Compile Include="GameAction\BuildCity.cs" />
+    <Compile Include="GameAction\BuildTown.cs" />
     <Compile Include="GameAction\BuyDevelopmentCard.cs" />
     <Compile Include="GameAction\IGameAction.cs" />
     <Compile Include="GameAction\LooseCards.cs" />
@@ -72,12 +73,15 @@
     <Compile Include="ITurn.cs" />
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
+    <Compile Include="Validator\CanBuildTownAt.cs" />
     <Compile Include="Validator\CanPayPiece.cs" />
     <Compile Include="Validator\CanPlaceRobberAt.cs" />
     <Compile Include="Validator\HasCityInStock.cs" />
     <Compile Include="Validator\HasHexAt.cs" />
     <Compile Include="Validator\HasResources.cs" />
+    <Compile Include="Validator\HasRoadTo.cs" />
     <Compile Include="Validator\HasTownAt.cs" />
+    <Compile Include="Validator\HasTownInStock.cs" />
     <Compile Include="Validator\IsOnTurn.cs" />
     <Compile Include="Validator\IValidator.cs" />
     <Compile Include="LargestArmy.cs" />

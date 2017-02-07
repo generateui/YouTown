@@ -19,7 +19,7 @@
 
         public IPlayer Player { get; }
         public int Id { get; }
-        public Point Point { get; }
+        public Point Point { get; set; }
         public PieceType PieceType => TownType;
         public bool AffectsRoad => true;
         public IResourceList Cost => new TownCost();
