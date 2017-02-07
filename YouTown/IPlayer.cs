@@ -7,6 +7,7 @@ namespace YouTown
         IUser User { get; }
         string Color { get; } //TODO: introduce PlayerColor
         bool IsOnTurn { get; set; }
+        int TotalVictoryPoints { get; }
 
         ISet<IPiece> Pieces { get; }
         IDictionary<Edge, IList<IEdgePiece>> EdgePieces { get; }

@@ -45,6 +45,7 @@
     <Compile Include="GameAction\BuildRoad.cs" />
     <Compile Include="GameAction\BuildTown.cs" />
     <Compile Include="GameAction\BuyDevelopmentCard.cs" />
+    <Compile Include="GameAction\ClaimVictory.cs" />
     <Compile Include="GameAction\IGameAction.cs" />
     <Compile Include="GameAction\LooseCards.cs" />
     <Compile Include="GameAction\MoveRobber.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Validator\CanPayPiece.cs" />
     <Compile Include="Validator\CanPlaceRobberAt.cs" />
     <Compile Include="Validator\HasCityInStock.cs" />
+    <Compile Include="Validator\HasEnoughVictoryPoints.cs" />
     <Compile Include="Validator\HasHexAt.cs" />
     <Compile Include="Validator\HasResources.cs" />
     <Compile Include="Validator\HasRoadInStock.cs" />
