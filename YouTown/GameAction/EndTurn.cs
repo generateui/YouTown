@@ -34,7 +34,7 @@ namespace YouTown.GameAction
             {
                 token.RemoveFromPlayer(Player);
             }
-            game.PlayTurns.MoveToNextTurn(game.Identifier);
+            game.PlayTurns.MoveToNextTurn(game);
 
             TurnPhase = game.PlayTurns.TurnPhase;
             GamePhase = game.GamePhase;

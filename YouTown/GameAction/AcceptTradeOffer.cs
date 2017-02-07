@@ -2,9 +2,9 @@
 
 namespace YouTown.GameAction
 {
-    public class RejectTradeOffer : IGameAction
+    public class AcceptTradeOffer : IGameAction
     {
-        public RejectTradeOffer(int id, IPlayer player, TradeOffer tradeOffer)
+        public AcceptTradeOffer(int id, IPlayer player, TradeOffer tradeOffer)
         {
             Id = id;
             Player = player;
@@ -34,12 +34,12 @@ namespace YouTown.GameAction
 
         public void Perform(IGame game)
         {
-            var rejectOffer = new Reject(Player);
-            TradeOffer.Responses.Add(rejectOffer);
+            var accept = new Accept(Player);
+            TradeOffer.Responses.Add(accept);
 
             TurnPhase = game.PlayTurns.TurnPhase;
             GamePhase = game.GamePhase;
             Turn = game.PlayTurns.Turn;
         }
-    }
+}
 }

@@ -10,7 +10,7 @@ namespace YouTown
         IActionQueue Queue { get; }
 
         IBank Bank { get; }
-        IList<IPlayer> Players { get; }
+        IPlayerList Players { get; }
         IIdentifier Identifier { get; }
         
         IGamePhase GamePhase { get; }
