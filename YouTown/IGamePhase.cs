@@ -235,6 +235,12 @@ namespace YouTown
                 game.Queue.EnqueueSingle(new RobPlayer(player), optional: true);
                 return null;
             }
+            // Produce resources:
+            // 1. determine productions
+            // 2. determine production per player
+            // 3. determine shortages
+            // 4. determine resources to distribute
+            // 5. distribute resources
             var hexes = game.Board.HexesByLocation.Values
                 .Where(h => h.Chit != null)
                 .Where(h => h.Chit.Number == roll)
