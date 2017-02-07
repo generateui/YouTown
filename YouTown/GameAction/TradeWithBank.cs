@@ -3,9 +3,9 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class TradeBank : IGameAction
+    public class TradeWithBank : IGameAction
     {
-        public TradeBank(int id, IPlayer player, IResourceList offeredToBank, IResourceList requestedFromBank)
+        public TradeWithBank(int id, IPlayer player, IResourceList offeredToBank, IResourceList requestedFromBank)
         {
             Id = id;
             Player = player;

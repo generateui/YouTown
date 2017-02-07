@@ -60,7 +60,8 @@
     <Compile Include="GameAction\RobPlayer.cs" />
     <Compile Include="GameAction\RollDice.cs" />
     <Compile Include="GameAction\SaySomething.cs" />
-    <Compile Include="GameAction\TradeBank.cs" />
+    <Compile Include="GameAction\TradeWithBank.cs" />
+    <Compile Include="GameAction\TradeWithPlayer.cs" />
     <Compile Include="IActionQueue.cs" />
     <Compile Include="IPlayerList.cs" />
     <Compile Include="IServerGame.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Validation\HasHexAt.cs" />
     <Compile Include="Validation\HasResourceAmount.cs" />
     <Compile Include="Validation\HasResources.cs" />
+    <Compile Include="Validation\HasResponse.cs" />
     <Compile Include="Validation\HasRoadInStock.cs" />
     <Compile Include="Validation\HasRoadOrTownToEdge.cs" />
     <Compile Include="Validation\HasRoadToPoint.cs" />
