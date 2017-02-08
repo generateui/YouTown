@@ -1,4 +1,6 @@
-﻿namespace YouTown
+﻿using System.Collections.Generic;
+
+namespace YouTown
 {
     public class Town : IPiece, IPointPiece, IVictoryPoint, IProducer
     {
@@ -38,6 +40,10 @@
             player.Pieces.Add(this);
             player.Stock[TownType].Remove(this);
             player.VictoryPoints.Add(this);
+            if (!player.PointPieces.ContainsKey(Point))
+            {
+                player.PointPieces[Point] = new List<IPointPiece>();
+            }
             player.PointPieces[Point].Add(this);
             player.Producers.Add(this);
         }

@@ -1,4 +1,6 @@
-﻿namespace YouTown
+﻿using System.Collections.Generic;
+
+namespace YouTown
 {
     public class Road : IPiece, IEdgePiece
     {
@@ -31,6 +33,10 @@
             player.Roads[Edge] = this;
             player.Pieces.Add(this);
             player.Stock[RoadType].Remove(this);
+            if (!player.EdgePieces.ContainsKey(Edge))
+            {
+                player.EdgePieces[Edge] = new List<IEdgePiece>();
+            }
             player.EdgePieces[Edge].Add(this);
         }
         public void RemoveFromPlayer(IPlayer player)

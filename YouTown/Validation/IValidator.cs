@@ -93,7 +93,7 @@ namespace YouTown.Validation
             {
                 var validator = validatorValue.Validator;
                 var value1 = validatorValue.Value1;
-                var value2 = validatorValue.Value1;
+                var value2 = validatorValue.Value2;
                 var text = validatorValue.Text;
                 var result = validator.Validate(value1, value2, text);
                 if (!result.IsValid)
@@ -142,7 +142,7 @@ namespace YouTown.Validation
     /// Used to prevent boilerplat implementation of non-generic <see cref="IValidator"/> type
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public abstract class ValidatorBase<TValue> : IValidator<TValue>
+    public class ValidatorBase<TValue> : IValidator<TValue>
     {
         public virtual IValidationResult Validate(TValue player, string text = null)
         {
@@ -168,7 +168,7 @@ namespace YouTown.Validation
             throw new NotImplementedException();
         }
 
-        public IValidationResult Validate(object value1, object value2 = null, string text = null)
+        public IValidationResult Validate(object value1, object value2, string text = null)
         {
             return Validate((TValue1)value1, (TValue2)value2, text);
         }
