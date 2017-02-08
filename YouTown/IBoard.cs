@@ -155,7 +155,7 @@ namespace YouTown
             // if not sufficient concrete ports are delivered, remove the port
             var portsToReplace = board._hexesbyLocation.Values.Where(h => h.Port != null).ToList();
             var replacedPorts = new List<Water>();
-            var portz = new List<IPort>(ports.Ports);
+            var portz = new List<IPort>(ports);
             while (portz.Any() && portsToReplace.Any())
             {
                 var portToReplace = portsToReplace.PickRandom(random);

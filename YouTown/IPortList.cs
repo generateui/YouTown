@@ -3,29 +3,31 @@ using System.Linq;
 
 namespace YouTown
 {
-    public interface IPortList
+    public interface IPortList : IList<IPort>
     {
-        IList<IPort> Ports { get; }
         bool HasFourToOnePort();
         bool HasThreeToOnePort();
         bool HasTwoToOnePort(ResourceType resourceType);
         int AmountGold(IResourceList resourceList);
         IPort BestPortForResourceType(ResourceType resourceType);
     }
-    public class PortList : IPortList
+    public class PortList : List<IPort>, IPortList
     {
-        public PortList(IList<IPort> ports)
+
+        public PortList()
         {
-            Ports = ports;
         }
 
-        public IList<IPort> Ports { get; }
+        public PortList(IEnumerable<IPort> ports)
+        {
+            AddRange(ports);
+        }
 
-        public bool HasFourToOnePort() => Ports.Any(p => p.InAmount == 4 && p.OutAmount == 1);
+        public bool HasFourToOnePort() => this.Any(p => p.InAmount == 4 && p.OutAmount == 1);
 
-        public bool HasThreeToOnePort() => Ports.Any(p => p.InAmount == 3 && p.OutAmount == 1);
+        public bool HasThreeToOnePort() => this.Any(p => p.InAmount == 3 && p.OutAmount == 1);
 
-        public bool HasTwoToOnePort(ResourceType resourceType) => Ports.Any(
+        public bool HasTwoToOnePort(ResourceType resourceType) => this.Any(
                 p => p.ResourceType != null && 
                 p.ResourceType.Equals(resourceType) && 
                 p.InAmount == 2 && 
@@ -49,8 +51,8 @@ namespace YouTown
 
         public IPort BestPortForResourceType(ResourceType resourceType)
         {
-            IPort best = Ports.FirstOrDefault();
-            foreach (var port in Ports)
+            IPort best = this.FirstOrDefault();
+            foreach (var port in this)
             {
                 bool canTrade = port.CanTrade(resourceType);
                 if (!canTrade)

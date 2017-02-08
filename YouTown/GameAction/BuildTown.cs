@@ -51,7 +51,7 @@ namespace YouTown.GameAction
                 .FirstOrDefault(h => h.Port.Edge.Points.Contains(Point));
             if (matchingHexWithPort != null)
             {
-                Player.Ports.Ports.Add(matchingHexWithPort.Port);
+                Player.Ports.Add(matchingHexWithPort.Port);
             }
 
             TurnPhase = game.PlayTurns.TurnPhase;

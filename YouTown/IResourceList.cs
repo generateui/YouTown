@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,7 +33,7 @@ namespace YouTown
             Timber.TimberType, Wheat.WheatType, Sheep.SheepType, Clay.ClayType, Ore.OreType
         };
 
-        private readonly Dictionary<ResourceType, List<IResource>> _resources = 
+        protected readonly Dictionary<ResourceType, List<IResource>> _resources = 
             new Dictionary<ResourceType, List<IResource>>();
 
         public ResourceList(IEnumerable<IResource> list)
@@ -207,5 +208,89 @@ namespace YouTown
         /// <inheritdoc />
         /// TODO: this is horribly inefficient given some call patterns
         public IResource this[int index] => _resources.SelectMany(kvp => kvp.Value).ToList()[index];
+    }
+
+    public class MutableResourceList : ResourceList, IList<IResource>, IResourceList
+    {
+        /// <inheritdoc />
+        public void Add(IResource resource)
+        {
+            AddSafe(resource);
+        }
+
+        /// <inheritdoc />
+        public void Clear()
+        {
+            _resources.Clear();
+        }
+
+        /// <inheritdoc />
+        public bool Contains(IResource resource)
+        {
+            if (!HasType(resource.ResourceType))
+            {
+                return false;
+            }
+            return OfType(resource.ResourceType).Any(r => r.Equals(resource));
+        }
+
+        /// <inheritdoc />
+        public void CopyTo(IResource[] array, int arrayIndex)
+        {
+            this.ToArray().CopyTo(array, arrayIndex);
+        }
+
+        /// <inheritdoc />
+        public bool Remove(IResource resource)
+        {
+            if (!HasType(resource.ResourceType))
+            {
+                return false;
+            }
+            return _resources[resource.ResourceType].Remove(resource);
+        }
+
+        /// <inheritdoc />
+        public bool IsReadOnly => false;
+
+        /// <inheritdoc />
+        public int IndexOf(IResource resource)
+        {
+            return this.ToList().IndexOf(resource);
+        }
+
+        /// <inheritdoc />
+        public void Insert(int index, IResource item)
+        {
+            throw new NotSupportedException("makes no sense");
+        }
+
+        /// <inheritdoc />
+        public void RemoveAt(int index)
+        {
+            var list = this.ToList();
+            if (index < 0 || index > list.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+            var resourceToRemove = this.ToList()[index];
+            Remove(resourceToRemove);
+        }
+
+        /// <inheritdoc />
+        public new IResource this[int index]
+        {
+            get
+            {
+                var list = this.ToList();
+                if (index < 0 || index > list.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+                var resource = this.ToList()[index];
+                return resource;
+            }
+            set { throw new NotSupportedException("makes no sense"); }
+        }
     }
 }
