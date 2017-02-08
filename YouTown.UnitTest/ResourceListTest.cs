@@ -50,7 +50,7 @@ namespace YouTown.UnitTest
 
         private class DerpyResource : IResource
         {
-            public static readonly ResourceType Derpy = new ResourceType("derpy", Color.Black);
+            public static readonly ResourceType Derpy = new ResourceType("derpy", Color.Black, id => new DerpyResource());
             public int Id { get; }
             public bool IsTradeable { get; }
             public ResourceType ResourceType => Derpy;

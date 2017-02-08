@@ -1,10 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace YouTown
 {
+    public class DevelopmentCardType
+    {
+        private string _type;
+        private Func<int, IDevelopmentCard> _factory;
+
+        public DevelopmentCardType(string type, Func<int, IDevelopmentCard> factory)
+        {
+            _type = type;
+            _factory = factory;
+        }
+
+        public IDevelopmentCard Create(int id) => _factory(id);
+
+        protected bool Equals(DevelopmentCardType other)
+        {
+            return string.Equals(_type, other._type);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((DevelopmentCardType) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return _type?.GetHashCode() ?? 0;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => _type;
+    }
+
     public interface IDevelopmentCard : IPiece
     {
+        DevelopmentCardType DevelopmentCardType { get; }
         bool MaxOnePerTurn { get; }
         bool WaitOneTurnBeforePlay { get; }
         bool MoveToStockAfterPlay { get; }
@@ -15,7 +54,7 @@ namespace YouTown
         ITurn TurnBought { get; set; }
         ITurn TurnPlayed { get; set; }
         void Play(IGame game);
-
+        void PerformAtServer(IServerGame serverGame);
     }
 
     public class DevelopmentCardCost : ResourceList
@@ -28,15 +67,16 @@ namespace YouTown
 
     public abstract class DevelopmentCardBase : IDevelopmentCard
     {
-        public static PieceType DevelopmentCardType = new PieceType("developmentcard");
+        public static PieceType DevelopmentCardPieceType = new PieceType("developmentcard");
         public int Id { get; protected set; }
+        public DevelopmentCardType DevelopmentCardType { get; }
         public virtual bool MaxOnePerTurn { get; }
         public virtual bool WaitOneTurnBeforePlay { get; }
         public virtual bool MoveToStockAfterPlay { get; }
         public ITurn TurnBought { get; set; }
         public ITurn TurnPlayed { get; set; }
         public IPlayer Player { get; set; }
-        public PieceType PieceType => DevelopmentCardType;
+        public PieceType PieceType => DevelopmentCardPieceType;
         public bool AffectsRoad => false;
 
         public IResourceList Cost => new DevelopmentCardCost();
@@ -44,6 +84,10 @@ namespace YouTown
         public virtual void Play(IGame game)
         {
             throw new System.NotImplementedException();
+        }
+
+        public virtual void PerformAtServer(IServerGame serverGame)
+        {
         }
 
         public void AddToPlayer(IPlayer player)
@@ -67,6 +111,8 @@ namespace YouTown
 
     public class VictoryPointCard : DevelopmentCardBase, IDevelopmentCard, IVictoryPoint
     {
+        public static DevelopmentCardType VictoryPointCardType = 
+            new DevelopmentCardType("VictoryPointCard", id => new VictoryPointCard(id));
         public VictoryPointCard(int id = Identifier.DontCare)
         {
             Id = id;
@@ -83,6 +129,9 @@ namespace YouTown
 
     public class Soldier : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
+        public static DevelopmentCardType SoldierType = 
+            new DevelopmentCardType("Soldier", id => new Soldier(id));
+
         public Soldier(int id = Identifier.DontCare, bool isAtServer = false, IPlayer playerAtClient = null)
         {
             PlayerAtClient = playerAtClient;
@@ -104,8 +153,12 @@ namespace YouTown
 
     public class Invention : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
-        public Invention(bool isAtServer = false, IPlayer playerAtClient = null)
+        public static DevelopmentCardType InventionType = 
+            new DevelopmentCardType("Invention", id => new Invention(id));
+
+        public Invention(int id = Identifier.DontCare, bool isAtServer = false, IPlayer playerAtClient = null)
         {
+            Id = id;
             PlayerAtClient = playerAtClient;
             IsAtServer = isAtServer;
         }
@@ -125,11 +178,13 @@ namespace YouTown
 
     public class Monopoly : DevelopmentCardBase, IDevelopmentCard, IObscurable
     {
+        public static DevelopmentCardType MonopolyType = new DevelopmentCardType("Monopoly", id => new Monopoly(id));
         private readonly Dictionary<IPlayer, IResourceList> _stolen = 
             new Dictionary<IPlayer, IResourceList>();
 
-        public Monopoly(bool isAtServer = false, IPlayer playerAtClient = null)
+        public Monopoly(int id = Identifier.DontCare, bool isAtServer = false, IPlayer playerAtClient = null)
         {
+            Id = id;
             IsAtServer = isAtServer;
             PlayerAtClient = playerAtClient;
         }
@@ -201,15 +256,30 @@ namespace YouTown
             }
         }
 
+        public static DevelopmentCardType RoadBuildingType = new DevelopmentCardType("RoadBuilding", id => new RoadBuilding(id));
+
+        public RoadBuilding(int id = Identifier.DontCare)
+        {
+            Id = id;
+        }
+
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
+        public IEnumerable<Token> Tokens { get; private set; }
+
+        public override void PerformAtServer(IServerGame serverGame)
+        {
+            var token1 = new Token(Player, serverGame.Identifier.NewId());
+            var token2 = new Token(Player, serverGame.Identifier.NewId());
+            Tokens = new List<Token> { token1, token2 };
+        }
 
         public override void Play(IGame game)
         {
-            var token1 = new Token(Player, game.Identifier.NewId());
-            var token2 = new Token(Player, game.Identifier.NewId());
-            token1.AddToPlayer(Player);
-            token2.AddToPlayer(Player);
+            foreach (var token in Tokens)
+            {
+                token.AddToPlayer(Player);
+            }
         }
     }
 }

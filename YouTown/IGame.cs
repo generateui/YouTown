@@ -4,14 +4,16 @@ namespace YouTown
 {
     public interface IGame
     {
-        IBoard Board { get; }
-        IGameOptions Options { get; }
+        IPlayOptions PlayOptions { get; }
+        ISetupOptions SetupOptions { get; }
         IList<Chat> Chats { get; }
         IActionQueue Queue { get; }
 
+        IBoard Board { get; }
         IBank Bank { get; }
         IPlayerList Players { get; }
-        IIdentifier Identifier { get; }
+        LargestArmy LargestArmy { get; set; }
+        // LongestRoad LongestRoad { get; }
         
         IGamePhase GamePhase { get; }
         DetermineFirstPlayer DetermineFirstPlayer { get; }
@@ -22,12 +24,40 @@ namespace YouTown
         void MoveToNextPhase();
     }
 
-    public interface IGameOptions
+    public interface ISetupOptions
+    {
+        string Name { get; }
+        IBoard Board { get; }
+        int RoadCount { get; }
+        int TownCount { get; }
+        int CityCount { get; }
+        IPortList Ports { get; }
+        IHexList Hexes { get; }
+        IChitList Chits { get; }
+        IDictionary<ResourceType, int> ResourceCountByType { get; }
+        IDictionary<DevelopmentCardType, int> DevelopmentCardCountByType { get; }
+    }
+
+    public class SetupOptions : ISetupOptions
+    {
+        public string Name { get; set; }
+        public IBoard Board { get; set; }
+        public int RoadCount { get; set; }
+        public int TownCount { get; set; }
+        public int CityCount { get; set; }
+        public IPortList Ports { get; set; }
+        public IHexList Hexes { get; set; }
+        public IChitList Chits { get; set; }
+        public IDictionary<ResourceType, int> ResourceCountByType { get; set; }
+        public IDictionary<DevelopmentCardType, int> DevelopmentCardCountByType { get; set; }
+    }
+
+    public interface IPlayOptions
     {
         int VictoryPointsToWin { get; set; }
     }
 
-    public class GameOptions : IGameOptions
+    public class PlayOptions : IPlayOptions
     {
         public int VictoryPointsToWin { get; set; }
     }
@@ -55,7 +85,9 @@ namespace YouTown
         public IBoard Board { get; }
         public IBank Bank { get; }
         public IPlayerList Players { get; }
-        public IGameOptions Options { get; } = new GameOptions();
+        public LargestArmy LargestArmy { get; set; }
+        public IPlayOptions PlayOptions { get; } = new PlayOptions();
+        public ISetupOptions SetupOptions { get; }
         public IList<Chat> Chats { get; } = new List<Chat>();
         public IActionQueue Queue { get; } = new ActionQueue();
         public IIdentifier Identifier { get; } = new Identifier();

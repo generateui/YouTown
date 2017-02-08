@@ -215,10 +215,9 @@ namespace YouTown
 
         public void MoveToNextTurn(IGame game)
         {
-            var id = game.Identifier.NewId();
             var number = Turn.Number + 1;
             var player = game.Players.Next(Turn.Player);
-            Turn = new PlayTurnsTurn(id, number, player);
+            Turn = new PlayTurnsTurn(number, player);
         }
 
         public override Production RollDice(IGame game, DiceRoll diceRoll, IPlayer player)

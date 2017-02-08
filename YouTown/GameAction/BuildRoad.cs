@@ -32,7 +32,8 @@ namespace YouTown.GameAction
                 //                .With<RoadAllowedWhenInitialPlacement>(game.GamePhase) TODO: implement
                 .With<IsOnTurn, IPlayer>(Player)
                 .With<CanBuildRoadAt, Edge, IBoard>(Edge, game.Board)
-                .With<HasRoadOrTownToEdge, Edge, IPlayer>(Edge, Player)
+                .With<HasConnectionToEdge, Edge, IPlayer>(Edge, Player)
+                // .With<HasLandHex, Edge, IBoard>
                 .Validate();
 
         public void PerformAtServer(IServerGame serverGame)

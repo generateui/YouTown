@@ -13,15 +13,8 @@ namespace YouTown
     }
     public class PortList : List<IPort>, IPortList
     {
-
-        public PortList()
-        {
-        }
-
-        public PortList(IEnumerable<IPort> ports)
-        {
-            AddRange(ports);
-        }
+        public PortList() { } 
+        public PortList(IEnumerable<IPort> ports) : base(ports) { }
 
         public bool HasFourToOnePort() => this.Any(p => p.InAmount == 4 && p.OutAmount == 1);
 

@@ -60,7 +60,7 @@ namespace YouTown.Validation
         }
 
         public ValidateAll With<TValidator, TValue>(TValue value, string text = null)
-            where TValidator : IValidator, new()
+            where TValidator : IValidator<TValue>, new()
         {
             var validatorValue = new ValidatorValue
             {
@@ -73,7 +73,7 @@ namespace YouTown.Validation
         }
 
         public ValidateAll With<TValidator, TValue1, TValue2>(TValue1 value1, TValue2 value2, string text = null)
-            where TValidator : IValidator, new()
+            where TValidator : IValidator<TValue1, TValue2>, new()
         {
             var validatorValue = new ValidatorValue
             {

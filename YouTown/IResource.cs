@@ -1,4 +1,6 @@
-﻿namespace YouTown
+﻿using System;
+
+namespace YouTown
 {
     /// <summary>
     /// Wraps a string to ensure type safety
@@ -7,15 +9,19 @@
     public sealed class ResourceType
     {
         private readonly string _resourceType;
-        public ResourceType(string resourceType, Color color)
+        private readonly Func<int, IResource> _factory;
+
+        public ResourceType(string resourceType, Color color, Func<int, IResource> factory)
         {
             _resourceType = resourceType;
+            _factory = factory;
             Color = color;
         }
 
         public Color Color { get; }
-
         public string Value => _resourceType;
+
+        public IResource Create(int id) => _factory(id);
 
         private bool Equals(ResourceType other)
         {
@@ -106,7 +112,8 @@
 
     public class Wheat : ResourceBase
     {
-        public static readonly ResourceType WheatType = new ResourceType("wheat", Color.DarkYellow);
+        public static readonly ResourceType WheatType = 
+            new ResourceType("wheat", Color.DarkYellow, id => new Wheat(id));
         public Wheat(int id = Identifier.DontCare) : base(id)
         {
         }
@@ -116,7 +123,8 @@
 
     public class Timber : ResourceBase
     {
-        public static readonly ResourceType TimberType = new ResourceType("timber", Color.DarkGreen);
+        public static readonly ResourceType TimberType = 
+            new ResourceType("timber", Color.DarkGreen, id => new Timber(id));
         public Timber(int id = Identifier.DontCare) : base(id)
         {
         }
@@ -126,7 +134,8 @@
 
     public class Clay : ResourceBase
     {
-        public static readonly ResourceType ClayType = new ResourceType("clay", Color.Red);
+        public static readonly ResourceType ClayType = 
+            new ResourceType("clay", Color.Red, id => new Clay(id));
         public Clay(int id = Identifier.DontCare) : base(id)
         {
         }
@@ -136,7 +145,8 @@
 
     public class Ore : ResourceBase
     {
-        public static readonly ResourceType OreType = new ResourceType("ore", Color.Purple);
+        public static readonly ResourceType OreType = 
+            new ResourceType("ore", Color.Purple, id => new Ore(id));
         public Ore(int id = Identifier.DontCare) : base(id)
         {
         }
@@ -146,7 +156,8 @@
 
     public class Sheep : ResourceBase
     {
-        public static readonly ResourceType SheepType = new ResourceType("sheep", Color.LightGreen);
+        public static readonly ResourceType SheepType = 
+            new ResourceType("sheep", Color.LightGreen, id => new Sheep(id));
         public Sheep(int id = Identifier.DontCare) : base(id)
         {
         }

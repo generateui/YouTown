@@ -32,7 +32,7 @@ namespace YouTown.GameAction
         public IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(ResourcesToLoose)
-                .With<HasResources, IPlayer, IResourceList>(Player, ResourcesToLoose)
+                .With<HasResources, IResourceList, IResourceList>(Player.Hand, ResourcesToLoose)
                 .With<LoosesCorrectAmount, IPlayer, int>(Player, ResourcesToLoose.Count)
                 .Validate();
 

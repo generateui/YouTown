@@ -5,7 +5,7 @@
         public override IValidationResult Validate(IPlayer player, IGame game, string text = null)
         {
             int points = player.TotalVictoryPoints;
-            int needed = game.Options.VictoryPointsToWin;
+            int needed = game.PlayOptions.VictoryPointsToWin;
             if (points < needed)
             {
                 return new Invalid($"player {player.User.Name} has {points} but needs at least {needed} to claim victory");

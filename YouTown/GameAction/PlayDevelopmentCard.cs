@@ -29,7 +29,7 @@ namespace YouTown.GameAction
                 .WithObject<NotNull>(DevelopmentCard)
                 .With<IsOnTurn, IPlayer>(Player)
                 .With<WaitedOneTurn, IDevelopmentCard, ITurn>(DevelopmentCard, game.PlayTurns.Turn)
-                .With<NotYetPlayedDevelopmentCard, ITurn, IDevelopmentCard>(game.PlayTurns.Turn, DevelopmentCard)
+                .With<NotYetPlayedDevelopmentCard, IPlayTurnsTurn, IDevelopmentCard>(game.PlayTurns.Turn, DevelopmentCard)
                 .Validate();
 
         public void PerformAtServer(IServerGame serverGame)

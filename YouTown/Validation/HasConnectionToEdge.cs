@@ -2,7 +2,7 @@
 
 namespace YouTown.Validation
 {
-    public class HasRoadOrTownToEdge : ValidatorBase<Edge, IPlayer>
+    public class HasConnectionToEdge : ValidatorBase<Edge, IPlayer>
     {
         public override IValidationResult Validate(Edge edge, IPlayer player, string text = null)
         {

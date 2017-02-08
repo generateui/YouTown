@@ -3,10 +3,42 @@ using System.Linq;
 
 namespace YouTown
 {
+    public sealed class PlayerColor
+    {
+        private string _color;
+
+        private PlayerColor(string color)
+        {
+            _color = color;
+        }
+
+        private bool Equals(PlayerColor other)
+        {
+            return string.Equals(_color, other._color);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is PlayerColor && Equals((PlayerColor) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return _color?.GetHashCode() ?? 0;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => _color;
+    }
+
     public interface IPlayer
     {
         IUser User { get; }
-        string Color { get; } //TODO: introduce PlayerColor
+        PlayerColor Color { get; } //TODO: introduce PlayerColor
         bool IsOnTurn { get; set; }
         int TotalVictoryPoints { get; }
 
@@ -33,14 +65,14 @@ namespace YouTown
 
     public class Player : IPlayer
     {
-        public Player(IUser user, string color)
+        public Player(IUser user)
         {
             User = user;
-            Color = color;
+            Color = user.Color;
         }
 
         public IUser User { get; }
-        public string Color { get; }
+        public PlayerColor Color { get; }
         public bool IsOnTurn { get; set; } = false;
         public int TotalVictoryPoints => VictoryPoints.Sum(vp => vp.VictoryPoints);
         public ISet<IPiece> Pieces { get; } = new HashSet<IPiece>();

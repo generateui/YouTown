@@ -2,7 +2,7 @@
 
 namespace YouTown
 {
-    public interface ITurn : IGameItem
+    public interface ITurn
     {
         /// <summary>
         /// Consecutive 1-based number of the turn within a game
@@ -19,28 +19,24 @@ namespace YouTown
 
     public class PlaceTurn : ITurn
     {
-        public PlaceTurn(int id, int number, IPlayer player)
+        public PlaceTurn(int number, IPlayer player)
         {
-            Id = id;
             Number = number;
             Player = player;
         }
 
-        public int Id { get; }
         public int Number { get; }
         public IPlayer Player { get; }
     }
 
     public class PlayTurnsTurn : IPlayTurnsTurn
     {
-        public PlayTurnsTurn(int id, int number, IPlayer player)
+        public PlayTurnsTurn(int number, IPlayer player)
         {
-            Id = id;
             Number = number;
             Player = player;
         }
 
-        public int Id { get; }
         public int Number { get; }
         public IPlayer Player { get; }
         public bool HasPlayedDevelopmentCard { get; set; }
@@ -48,7 +44,7 @@ namespace YouTown
 
         protected bool Equals(PlayTurnsTurn other)
         {
-            return Id == other.Id && Number == other.Number && HasPlayedDevelopmentCard;
+            return Number == other.Number && HasPlayedDevelopmentCard;
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -68,7 +64,7 @@ namespace YouTown
         {
             unchecked
             {
-                return (Id*397) ^ Number ^ HasPlayedDevelopmentCard.GetHashCode();
+                return Number ^ HasPlayedDevelopmentCard.GetHashCode();
             }
         }
     }
