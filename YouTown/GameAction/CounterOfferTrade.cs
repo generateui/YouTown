@@ -10,6 +10,7 @@ namespace YouTown.GameAction
     /// the <seealso cref="Player"/> is the opponent. 
     public class CounterOfferTrade : IGameAction
     {
+        public static ActionType CounterOfferTradeType = new ActionType("CounterOfferTrade");
         public CounterOfferTrade(int id, IPlayer player, TradeOffer tradeOffer, IResourceList counterOffered, IResourceList counterRequested)
         {
             Id = id;
@@ -20,6 +21,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => CounterOfferTradeType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

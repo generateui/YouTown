@@ -5,6 +5,7 @@ namespace YouTown.GameAction
 {
     public class SaySomething : IGameAction
     {
+        public static ActionType SaySomethingType = new ActionType("SaySomething");
         public SaySomething(int id, IPlayer player, string what)
         {
             Id = id;
@@ -13,6 +14,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => SaySomethingType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

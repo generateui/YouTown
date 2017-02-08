@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class ClaimVictory : IGameAction
     {
+        public static ActionType ClaimVictoryType = new ActionType("ClaimVictory");
         public ClaimVictory(int id, IPlayer player)
         {
             Id = id;
@@ -11,6 +12,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => ClaimVictoryType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

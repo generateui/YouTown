@@ -5,6 +5,7 @@ namespace YouTown.GameAction
 {
     public class BuildTown : IGameAction
     {
+        public static ActionType BuildTownType = new ActionType("BuildTown");
         public BuildTown(int id, IPlayer player, Point point)
         {
             Id = id;
@@ -13,6 +14,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => BuildTownType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

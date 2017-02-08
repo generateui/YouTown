@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class PlayDevelopmentCard : IGameAction
     {
+        public static ActionType PlayDevelopmentCardType = new ActionType("PlayDevelopmentCard");
         public PlayDevelopmentCard(int id, IPlayer player, IDevelopmentCard developmentCard)
         {
             Id = id;
@@ -12,6 +13,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => PlayDevelopmentCardType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

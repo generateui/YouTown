@@ -5,6 +5,7 @@ namespace YouTown.GameAction
 {
     public class BuildRoad : IGameAction
     {
+        public static ActionType BuildRoadType = new ActionType("BuildRoad");
         public BuildRoad(int id, IPlayer player, Edge edge)
         {
             Id = id;
@@ -13,6 +14,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => BuildRoadType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

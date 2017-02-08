@@ -5,6 +5,7 @@ namespace YouTown.GameAction
 {
     public class EndTurn : IGameAction
     {
+        public static ActionType EndTurnType = new ActionType("EndTurn");
         public EndTurn(int id, IPlayer player)
         {
             Id = id;
@@ -12,6 +13,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => EndTurnType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

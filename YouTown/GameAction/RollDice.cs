@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class RollDice : IGameAction
     {
+        public static ActionType RollDiceType = new ActionType("RollDice");
         public RollDice(int id, IPlayer player)
         {
             Id = id;
@@ -11,6 +12,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => RollDiceType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

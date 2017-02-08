@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class LooseCards : IGameAction
     {
+        public static ActionType LooseCardsType = new ActionType("LooseCards");
         public LooseCards(IPlayer player)
         {
             Player = player;
@@ -17,6 +18,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => LooseCardsType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

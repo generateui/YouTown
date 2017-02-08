@@ -6,6 +6,7 @@ namespace YouTown.GameAction
 {
     public class RobPlayer : IGameAction
     {
+        public static ActionType RobPlayerType = new ActionType("RobPlayer");
         public RobPlayer(IPlayer player)
         {
             Player = player;
@@ -19,6 +20,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => RobPlayerType;
         public IPlayer Player { get; }
         public IPlayer Opponent { get; }
         public IResource Resource { get; private set; }

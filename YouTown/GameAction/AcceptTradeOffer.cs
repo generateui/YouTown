@@ -4,6 +4,8 @@ namespace YouTown.GameAction
 {
     public class AcceptTradeOffer : IGameAction
     {
+        public static ActionType AcceptTradeOfferType = new ActionType("AcceptTradeOffer");
+
         public AcceptTradeOffer(int id, IPlayer player, TradeOffer tradeOffer)
         {
             Id = id;
@@ -12,6 +14,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => AcceptTradeOfferType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

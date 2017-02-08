@@ -5,6 +5,7 @@ namespace YouTown.GameAction
 {
     public class TradeWithBank : IGameAction
     {
+        public static ActionType TradeWithBankType = new ActionType("TradeWithBank");
         public TradeWithBank(int id, IPlayer player, IResourceList offeredToBank, IResourceList requestedFromBank)
         {
             Id = id;
@@ -14,6 +15,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => TradeWithBankType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

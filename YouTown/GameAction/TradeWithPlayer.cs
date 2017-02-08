@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class TradeWithPlayer : IGameAction
     {
+        public static ActionType TradeWithPlayerType = new ActionType("TradeWithPlayer");
         // TODO: fix this ridiculously long list
         public TradeWithPlayer(
             int id,
@@ -22,6 +23,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => TradeWithPlayerType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }

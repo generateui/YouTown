@@ -4,6 +4,7 @@ namespace YouTown.GameAction
 {
     public class OfferTrade : IGameAction
     {
+        public static ActionType OfferTradeType = new ActionType("OfferTrade");
         public OfferTrade(int id, IPlayer player, IResourceList offered, IResourceList requested)
         {
             Id = id;
@@ -13,6 +14,7 @@ namespace YouTown.GameAction
         }
 
         public int Id { get; }
+        public ActionType ActionType => OfferTradeType;
         public IPlayer Player { get; }
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }
