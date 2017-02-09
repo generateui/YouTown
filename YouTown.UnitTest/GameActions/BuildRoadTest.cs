@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using YouTown.GameAction;
 
-namespace YouTown.UnitTest
+namespace YouTown.UnitTest.GameActions
 {
     [TestClass]
     public class BuildRoadTest
