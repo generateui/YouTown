@@ -2,7 +2,7 @@
 
 namespace YouTown
 {
-    public class Town : IPiece, IPointPiece, IVictoryPoint, IProducer
+    public class Town : IPiece, IVertexPiece, IVictoryPoint, IProducer
     {
         public class TownCost : ResourceList
         {
@@ -12,22 +12,22 @@ namespace YouTown
             }
         }
         public static readonly PieceType TownType = new PieceType("town");
-        public Town(IPlayer player, int id = Identifier.DontCare, Point point = null)
+        public Town(IPlayer player, int id = Identifier.DontCare, Vertex vertex = null)
         {
             Player = player;
             Id = id;
-            Point = point;
+            Vertex = vertex;
         }
 
         public IPlayer Player { get; }
         public int Id { get; }
-        public Point Point { get; set; }
+        public Vertex Vertex { get; set; }
         public PieceType PieceType => TownType;
         public bool AffectsRoad => true;
         public IResourceList Cost => new TownCost();
         public int VictoryPoints => 1;
 
-        public bool IsAt(Location location) => Point.Locations.Contains(location);
+        public bool IsAt(Location location) => Vertex.Locations.Contains(location);
 
         public IResourceList Produce(IHex hex)
         {
@@ -36,40 +36,40 @@ namespace YouTown
 
         public void AddToPlayer(IPlayer player)
         {
-            player.Towns[Point] = this;
+            player.Towns[Vertex] = this;
             player.Pieces.Add(this);
             player.Stock[TownType].Remove(this);
             player.VictoryPoints.Add(this);
-            if (!player.PointPieces.ContainsKey(Point))
+            if (!player.VertexPieces.ContainsKey(Vertex))
             {
-                player.PointPieces[Point] = new List<IPointPiece>();
+                player.VertexPieces[Vertex] = new List<IVertexPiece>();
             }
-            player.PointPieces[Point].Add(this);
+            player.VertexPieces[Vertex].Add(this);
             player.Producers.Add(this);
         }
 
         public void RemoveFromPlayer(IPlayer player)
         {
-            player.Towns.Remove(Point);
+            player.Towns.Remove(Vertex);
             player.Pieces.Remove(this);
             player.Stock[TownType].Add(this);
             player.VictoryPoints.Remove(this);
-            player.PointPieces[Point].Remove(this);
+            player.VertexPieces[Vertex].Remove(this);
             player.Producers.Remove(this);
         }
 
         public void AddToBoard(IBoard board)
         {
-            board.TownsByPoint[Point] = this;
-            board.PiecesByPoint[Point] = this;
+            board.TownsByVertex[Vertex] = this;
+            board.PiecesByVertex[Vertex] = this;
             board.Pieces.Add(this);
             board.Producers.Add(this);
         }
 
         public void RemoveFromBoard(IBoard board)
         {
-            board.TownsByPoint.Remove(Point);
-            board.PiecesByPoint.Remove(Point);
+            board.TownsByVertex.Remove(Vertex);
+            board.PiecesByVertex.Remove(Vertex);
             board.Pieces.Remove(this);
             board.Producers.Remove(this);
         }

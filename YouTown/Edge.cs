@@ -7,7 +7,7 @@ namespace YouTown
     public class Edge
     {
         private List<Location> _locations;
-        private List<Point> _points;
+        private List<Vertex> _vertices;
         private List<Edge> _neighbors;
 
         public Edge(Location first, Location second)
@@ -20,8 +20,8 @@ namespace YouTown
         public Location Location1 { get; }
         public Location Location2 { get; }
 
-        public Point Point1 => Points[0];
-        public Point Point2 => Points[1];
+        public Vertex Vertex1 => Vertices[0];
+        public Vertex Vertex2 => Vertices[1];
 
         public IList<Location> Locations
         {
@@ -39,13 +39,13 @@ namespace YouTown
             }
         }
 
-        public IList<Point> Points
+        public IList<Vertex> Vertices
         {
             get
             {
-                if (_points != null)
+                if (_vertices != null)
                 {
-                    return _points;
+                    return _vertices;
                 }
                 var neighbors = Location1.Neighbors
                     .Concat(Location2.Neighbors)
@@ -53,12 +53,12 @@ namespace YouTown
                     .Where(g => g.Count() == 2)
                     .Select(g => g.Key)
                     .ToList();
-                _points = new List<Point>
+                _vertices = new List<Vertex>
                 {
-                    new Point(Location1, Location2, neighbors[0]),
-                    new Point(Location1, Location2, neighbors[1]),
+                    new Vertex(Location1, Location2, neighbors[0]),
+                    new Vertex(Location1, Location2, neighbors[1]),
                 };
-                return _points;
+                return _vertices;
             }
         }
 

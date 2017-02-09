@@ -35,18 +35,18 @@ namespace YouTown.UnitTest
         }
 
         [TestMethod]
-        public void Points_AreCorrect6Points()
+        public void Vertices_AreCorrect6Vertices()
         {
             var location = Center.Location;
-            var points = location.Points;
+            var vertices = location.Vertices;
 
-            Assert.AreEqual(6, points.Count);
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor0, Center.Neighbor1)));
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor1, Center.Neighbor2)));
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor2, Center.Neighbor3)));
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor3, Center.Neighbor4)));
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor4, Center.Neighbor5)));
-            Assert.IsTrue(points.Contains(new Point(location, Center.Neighbor5, Center.Neighbor0)));
+            Assert.AreEqual(6, vertices.Count);
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor0, Center.Neighbor1)));
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor1, Center.Neighbor2)));
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor2, Center.Neighbor3)));
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor3, Center.Neighbor4)));
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor4, Center.Neighbor5)));
+            Assert.IsTrue(vertices.Contains(new Vertex(location, Center.Neighbor5, Center.Neighbor0)));
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace YouTown.UnitTest
         }
 
         [TestMethod]
-        public void CreateBoardFromNeighbors_EdgesPointsKLocationsCountAreCorrect()
+        public void CreateBoardFromNeighbors_EdgesVerticesKLocationsCountAreCorrect()
         {
             var center = Center.Location;
             var neighbors = center.Neighbors;
@@ -85,9 +85,9 @@ namespace YouTown.UnitTest
                 .Select(l => l.GetHashCode())
                 .Distinct();
 
-            var points = locations.SelectMany(l => l.Points).Distinct();
-            var pointHashCodes = locations
-                .SelectMany(l => l.Points)
+            var vertices = locations.SelectMany(l => l.Vertices).Distinct();
+            var vertexHashCodes = locations
+                .SelectMany(l => l.Vertices)
                 .Select(p => p.GetHashCode())
                 .Distinct();
 
@@ -97,12 +97,12 @@ namespace YouTown.UnitTest
             Assert.AreEqual(72, edges.Count());
             Assert.AreEqual(72, edgeHashCodes.Count());
 
-            Assert.AreEqual(54, points.Count());
-            Assert.AreEqual(54, pointHashCodes.Count());
+            Assert.AreEqual(54, vertices.Count());
+            Assert.AreEqual(54, vertexHashCodes.Count());
         }
 
         [TestMethod]
-        public void CreateBoardFromNeighborsLevel10_EdgesPointsKLocationsCountAreCorrect()
+        public void CreateBoardFromNeighborsLevel10_EdgesVerticesKLocationsCountAreCorrect()
         {
             Func<Location, int, IEnumerable<Location>> getNeighborsRecursive = (location, i) =>
             {
@@ -168,7 +168,7 @@ namespace YouTown.UnitTest
             Assert.AreEqual(72, getEdgeCountOfLevel(3));
             Assert.AreEqual(132, getEdgeCountOfLevel(4));
 
-            Func<int, int> getPointCountOfLevel = i =>
+            Func<int, int> getVertexCountOfLevel = i =>
             {
                 // 1 2  3  4  5  6 7
                 // 6 24 54 96
@@ -187,10 +187,10 @@ namespace YouTown.UnitTest
                 }
                 return count;
             };
-            Assert.AreEqual(6, getPointCountOfLevel(1));
-            Assert.AreEqual(24, getPointCountOfLevel(2));
-            Assert.AreEqual(54, getPointCountOfLevel(3));
-            Assert.AreEqual(96, getPointCountOfLevel(4));
+            Assert.AreEqual(6, getVertexCountOfLevel(1));
+            Assert.AreEqual(24, getVertexCountOfLevel(2));
+            Assert.AreEqual(54, getVertexCountOfLevel(3));
+            Assert.AreEqual(96, getVertexCountOfLevel(4));
 
             for (int level = 1; level < 10; level++)
             {
@@ -206,11 +206,11 @@ namespace YouTown.UnitTest
                 Assert.AreEqual(edgeCount, edges.Count());
                 Assert.AreEqual(edgeCount, edgeHashCodes.Count());
 
-                var points = locations.SelectMany(l => l.Points).Distinct();
-                var pointHashCodes = points.Select(p => p.GetHashCode());
-                var pointCount = getPointCountOfLevel(level);
-                Assert.AreEqual(pointCount, points.Count());
-                Assert.AreEqual(pointCount, pointHashCodes.Count());
+                var vertices = locations.SelectMany(l => l.Vertices).Distinct();
+                var vertexHashCodes = vertices.Select(p => p.GetHashCode());
+                var vertexCount = getVertexCountOfLevel(level);
+                Assert.AreEqual(vertexCount, vertices.Count());
+                Assert.AreEqual(vertexCount, vertexHashCodes.Count());
             }
         }
     }

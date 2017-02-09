@@ -45,7 +45,7 @@ namespace YouTown
         ISet<IPiece> Pieces { get; }
         ISet<IProducer> Producers { get; }
         IDictionary<Edge, IList<IEdgePiece>> EdgePieces { get; }
-        IDictionary<Point, IList<IPointPiece>> PointPieces { get; }
+        IDictionary<Vertex, IList<IVertexPiece>> VertexPieces { get; }
 
         MutableResourceList Hand { get; }
         IPortList Ports { get; }
@@ -56,8 +56,8 @@ namespace YouTown
         IDictionary<PieceType, IList<IPiece>> Stock { get; }
 
         IDictionary<Edge, Road> Roads { get; }
-        IDictionary<Point, Town> Towns { get; }
-        IDictionary<Point, City> Cities { get; }
+        IDictionary<Vertex, Town> Towns { get; }
+        IDictionary<Vertex, City> Cities { get; }
 
         void GainResourcesFrom(IResourceList from, IResourceList toGain, IObscurable obscurable);
         void LooseResourcesTo(IResourceList to, IResourceList toLoose, IObscurable obscurable);
@@ -78,7 +78,7 @@ namespace YouTown
         public ISet<IPiece> Pieces { get; } = new HashSet<IPiece>();
         public ISet<IProducer> Producers { get; } = new HashSet<IProducer>();
         public IDictionary<Edge, IList<IEdgePiece>> EdgePieces { get; } = new Dictionary<Edge, IList<IEdgePiece>>();
-        public IDictionary<Point, IList<IPointPiece>> PointPieces { get; } = new Dictionary<Point, IList<IPointPiece>>();
+        public IDictionary<Vertex, IList<IVertexPiece>> VertexPieces { get; } = new Dictionary<Vertex, IList<IVertexPiece>>();
         public MutableResourceList Hand { get; } = new MutableResourceList();
         public IPortList Ports { get; } = new PortList();
         public IList<IDevelopmentCard> DevelopmentCards { get; } = new List<IDevelopmentCard>();
@@ -87,8 +87,8 @@ namespace YouTown
         public IList<Soldier> Soldier { get; } = new List<Soldier>();
         public IDictionary<PieceType, IList<IPiece>> Stock { get; } = new Dictionary<PieceType, IList<IPiece>>();
         public IDictionary<Edge, Road> Roads { get; } = new Dictionary<Edge, Road>();
-        public IDictionary<Point, Town> Towns { get; } = new Dictionary<Point, Town>();
-        public IDictionary<Point, City> Cities { get; } = new Dictionary<Point, City>();
+        public IDictionary<Vertex, Town> Towns { get; } = new Dictionary<Vertex, Town>();
+        public IDictionary<Vertex, City> Cities { get; } = new Dictionary<Vertex, City>();
 
         public void GainResourcesFrom(IResourceList @from, IResourceList toGain, IObscurable obscurable)
         {

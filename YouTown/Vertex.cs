@@ -3,16 +3,16 @@ using System.Linq;
 
 namespace YouTown
 {
-    public class Point
+    public class Vertex
     {
         private readonly Location _location1;
         private readonly Location _location2;
         private readonly Location _location3;
         private List<Edge> _edges;
-        private List<Point> _neighbors;
+        private List<Vertex> _neighbors;
         private List<Location> _locations;
 
-        public Point(Location location1, Location location2, Location location3)
+        public Vertex(Location location1, Location location2, Location location3)
         {
             _location1 = location1;
             _location2 = location2;
@@ -53,7 +53,7 @@ namespace YouTown
             }
         }
 
-        public IList<Point> Neighbors
+        public IList<Vertex> Neighbors
         {
             get
             {
@@ -90,17 +90,17 @@ namespace YouTown
                     .Select(g => g.Key)
                     .FirstOrDefault(hl => !hl.Equals(_location1));
 
-                _neighbors = new List<Point>
+                _neighbors = new List<Vertex>
                 {
-                    new Point(_location1, _location2, firstSecondNeighbor),
-                    new Point(_location1, _location3, firstThirdNeighbor),
-                    new Point(_location2, _location3, secondThirdNeighbor)
+                    new Vertex(_location1, _location2, firstSecondNeighbor),
+                    new Vertex(_location1, _location3, firstThirdNeighbor),
+                    new Vertex(_location2, _location3, secondThirdNeighbor)
                 };
                 return _neighbors;
             }
         }
 
-        protected bool Equals(Point other)
+        protected bool Equals(Vertex other)
         {
             return (Equals(_location1, other._location1) &&
                     Equals(_location2, other._location2) &&
@@ -135,7 +135,7 @@ namespace YouTown
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Point) obj);
+            return Equals((Vertex) obj);
         }
 
         /// <summary>Serves as the default hash function. </summary>

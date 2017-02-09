@@ -63,11 +63,11 @@
     }
 
     /// <summary>
-    /// Piece associated with a point on the board
+    /// Piece associated with a Vertex on the board
     /// </summary>
-    public interface IPointPiece
+    public interface IVertexPiece
     {
-        Point Point { get; }
+        Vertex Vertex { get; }
     }
 
     /// <summary>

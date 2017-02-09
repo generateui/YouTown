@@ -8,9 +8,9 @@ namespace YouTown
     {
         IReadOnlyDictionary<Location, IHex> HexesByLocation { get; }
         IDictionary<Edge, Road> RoadsByEdge { get; } 
-        IDictionary<Point, Town> TownsByPoint { get; } 
-        IDictionary<Point, City> CitiesByPoint { get; }
-        IDictionary<Point, IPointPiece> PiecesByPoint { get; } 
+        IDictionary<Vertex, Town> TownsByVertex { get; } 
+        IDictionary<Vertex, City> CitiesByVertex { get; }
+        IDictionary<Vertex, IVertexPiece> PiecesByVertex { get; } 
         IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
         ISet<IProducer> Producers { get; }
         ISet<IPiece> Pieces { get; }
@@ -122,9 +122,9 @@ namespace YouTown
         public Robber Robber { get; }
         public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;
         public IDictionary<Edge, Road> RoadsByEdge { get; }
-        public IDictionary<Point, Town> TownsByPoint { get; }
-        public IDictionary<Point, City> CitiesByPoint { get; }
-        public IDictionary<Point, IPointPiece> PiecesByPoint { get; }
+        public IDictionary<Vertex, Town> TownsByVertex { get; }
+        public IDictionary<Vertex, City> CitiesByVertex { get; }
+        public IDictionary<Vertex, IVertexPiece> PiecesByVertex { get; }
         public IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
 
         public int ConcentricCircles { get; set; }

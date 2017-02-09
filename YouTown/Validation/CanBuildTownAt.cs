@@ -2,22 +2,22 @@
 
 namespace YouTown.Validation
 {
-    public class CanBuildTownAt : ValidatorBase<Point, IBoard>
+    public class CanBuildTownAt : ValidatorBase<Vertex, IBoard>
     {
         // In the future, this check should probably be made more specific e.g. to towns and cities
-        public override IValidationResult Validate(Point point, IBoard board, string text = null)
+        public override IValidationResult Validate(Vertex vertex, IBoard board, string text = null)
         {
-            bool pointIsTaken = board.PiecesByPoint.ContainsKey(point);
-            bool neighboringPointsAreTaken = point.Neighbors
+            bool vertexIsTaken = board.PiecesByVertex.ContainsKey(vertex);
+            bool neighboringVerticesAreTaken = vertex.Neighbors
                 .ToList()
-                .Any(p => board.PiecesByPoint.ContainsKey(p));
-            if (pointIsTaken)
+                .Any(p => board.PiecesByVertex.ContainsKey(p));
+            if (vertexIsTaken)
             {
-                return new Invalid($"point {point} is already taken");
+                return new Invalid($"vertex {vertex} is already taken");
             }
-            if (neighboringPointsAreTaken)
+            if (neighboringVerticesAreTaken)
             {
-                return new Invalid($"neigbours of {point} are already taken");
+                return new Invalid($"neigbours of {vertex} are already taken");
             }
             return Validator.Valid;
         }

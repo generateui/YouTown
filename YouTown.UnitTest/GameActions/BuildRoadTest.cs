@@ -45,8 +45,8 @@ namespace YouTown.UnitTest.GameActions
             var playerPieces = new HashSet<IPiece>();
             playerMock.Setup(p => p.Stock).Returns(stock);
             playerMock.Setup(p => p.Roads).Returns(roads);
-            playerMock.Setup(p => p.Towns).Returns(new Dictionary<Point, Town>());
-            playerMock.Setup(p => p.Cities).Returns(new Dictionary<Point, City>());
+            playerMock.Setup(p => p.Towns).Returns(new Dictionary<Vertex, Town>());
+            playerMock.Setup(p => p.Cities).Returns(new Dictionary<Vertex, City>());
             playerMock.Setup(p => p.User).Returns(user);
             playerMock.Setup(p => p.Pieces).Returns(playerPieces);
             playerMock.Setup(p => p.EdgePieces).Returns(new Dictionary<Edge, IList<IEdgePiece>>());

@@ -20,13 +20,13 @@ namespace YouTown.UnitTest
         }
 
         [TestMethod]
-        public void Points_AreCorrect2Points()
+        public void Vertices_AreCorrect2Vertices()
         {
             var edge = new Edge(new Location(0,0,0), new Location(1, -1, 0));
-            var points = edge.Points;
+            var vertices = edge.Vertices;
 
-            Assert.IsTrue(points.Contains(new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(1,  0, -1))));
-            Assert.IsTrue(points.Contains(new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(0, -1,  1))));
+            Assert.IsTrue(vertices.Contains(new Vertex(new Location(0,0,0), new Location(1, -1, 0), new Location(1,  0, -1))));
+            Assert.IsTrue(vertices.Contains(new Vertex(new Location(0,0,0), new Location(1, -1, 0), new Location(0, -1,  1))));
         }
 
         [TestMethod]

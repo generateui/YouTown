@@ -139,7 +139,7 @@ namespace YouTown
                 return;
             }
             var resourcesGained = new List<IResource>();
-            foreach (Location location in town.Point.Locations)
+            foreach (Location location in town.Vertex.Locations)
             {
                 IHex hex = game.Board.HexesByLocation[location];
                 IResource resource = hex.Produce();

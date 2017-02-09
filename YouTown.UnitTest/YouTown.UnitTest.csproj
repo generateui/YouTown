@@ -91,7 +91,7 @@
     <Compile Include="PortListTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdgeTest.cs" />
-    <Compile Include="PointTest.cs" />
+    <Compile Include="VertexTest.cs" />
     <Compile Include="ResourceListTest.cs" />
     <Compile Include="GameActions\BuildRoadTest.cs" />
     <Compile Include="ValidateAllTest.cs" />

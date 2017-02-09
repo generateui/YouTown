@@ -6,11 +6,11 @@ namespace YouTown.GameAction
     public class BuildCity : IGameAction
     {
         public static ActionType BuildCityType = new ActionType("BuildCity");
-        public BuildCity(int id, IPlayer player, Point point)
+        public BuildCity(int id, IPlayer player, Vertex vertex)
         {
             Id = id;
             Player = player;
-            Point = point;
+            Vertex = vertex;
         }
 
         public int Id { get; }
@@ -19,7 +19,7 @@ namespace YouTown.GameAction
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }
         public ITurn Turn { get; private set; }
-        public Point Point { get; }
+        public Vertex Vertex { get; }
         public bool IsAllowedInOpponentTurn => false;
 
         public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
@@ -27,8 +27,8 @@ namespace YouTown.GameAction
 
         public IValidationResult Validate(IGame game) =>
             new ValidateAll()
-                .WithObject<NotNull>(Point)
-                .With<HasTownAt, IPlayer, Point>(Player, Point)
+                .WithObject<NotNull>(Vertex)
+                .With<HasTownAt, IPlayer, Vertex>(Player, Vertex)
                 .With<HasCityInStock, IPlayer>(Player)
 //                .With<CanPayPiece, IPlayer, IPiece>(Player, City)
                 .Validate();
@@ -39,12 +39,12 @@ namespace YouTown.GameAction
 
         public void Perform(IGame game)
         {
-            Town town = Player.Towns[Point];
+            Town town = Player.Towns[Vertex];
             town.RemoveFromPlayer(Player);
             town.RemoveFromBoard(game.Board);
 
             City cityFromStock = Player.Stock[City.CityType].Last() as City;
-            var city = new City(Player, cityFromStock.Id, Point);
+            var city = new City(Player, cityFromStock.Id, Vertex);
             city.AddToPlayer(Player);
             city.AddToBoard(game.Board);
             cityFromStock.RemoveFromPlayer(Player);

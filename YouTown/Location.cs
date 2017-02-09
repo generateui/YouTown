@@ -11,7 +11,7 @@ namespace YouTown
     {
         private List<Location> _neighbors;
         private List<Edge> _edges;
-        private List<Point> _points;
+        private List<Vertex> _vertices;
         private int _hashCode;
         private bool _hashCodeCalculated;
 
@@ -74,25 +74,25 @@ namespace YouTown
             }
         }
 
-        public IList<Point> Points
+        public IList<Vertex> Vertices
         {
             get
             {
-                if (_points != null)
+                if (_vertices != null)
                 {
-                    return _points;
+                    return _vertices;
                 }
                 var neighbors = Neighbors;
-                _points = new List<Point>
+                _vertices = new List<Vertex>
                 {
-                    new Point(this, neighbors[0], neighbors[1]),
-                    new Point(this, neighbors[1], neighbors[2]),
-                    new Point(this, neighbors[2], neighbors[3]),
-                    new Point(this, neighbors[3], neighbors[4]),
-                    new Point(this, neighbors[4], neighbors[5]),
-                    new Point(this, neighbors[5], neighbors[0])
+                    new Vertex(this, neighbors[0], neighbors[1]),
+                    new Vertex(this, neighbors[1], neighbors[2]),
+                    new Vertex(this, neighbors[2], neighbors[3]),
+                    new Vertex(this, neighbors[3], neighbors[4]),
+                    new Vertex(this, neighbors[4], neighbors[5]),
+                    new Vertex(this, neighbors[5], neighbors[0])
                 };
-                return _points;
+                return _vertices;
             }
         }
 
