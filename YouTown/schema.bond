@@ -1,0 +1,79 @@
+﻿namespace YouTown;
+
+struct LocationData
+{
+	0: int32 X;
+	1: int32 Y;
+	2: int32 Z;
+}
+
+struct EdgeData
+{
+	0: LocationData Location1;
+	1: LocationData Location2;
+}
+
+struct PointData
+{
+	0: LocationData Location1;
+	1: LocationData Location2;
+	2: LocationData Location3;
+}
+
+enum ChitTypeData 
+{
+	Chit2,
+	Chit3,
+	Chit4,
+	Chit5,
+	Chit6,
+	Chit8,
+	Chit9,
+	Chit10,
+	Chit11,
+	Chit12,
+	RandomChit,
+}
+
+struct ChitData
+{
+	0: int32 Id;
+	1: int32 Number;
+}
+
+enum PortTypeData
+{
+	FourToOne,
+	ThreeToOne,
+	Timber,
+	Wheat,
+	Sheep,
+	Clay,
+	Ore,
+	RandomPort,
+}
+
+struct PortData
+{
+	0: int32 Id;
+	1: PortTypeData PortType = FourToOne;
+}
+
+enum HexTypeData
+{
+	Field,
+	Forest,
+	Pasture,
+	Hill,
+	Mountain,
+	Water,
+	Desert,
+	RandomHex,
+}
+
+struct HexData
+{
+	0: int32 Id;
+	1: HexTypeData HexType = Field;
+	2: LocationData Location;
+}
