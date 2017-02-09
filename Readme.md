@@ -15,11 +15,13 @@ Three axis are used: the x, y and z axis. A coordinate (I really should use the 
 A hexagon is represented as an `IHex` and contains implementations like `Pasture`, `Forest`, `Mountain` but also `RandomHex`. 
 An `IHex` **has** a `Location`:
 
+```csharp
     public interface IHex
     {
         Location Location { get; }
         // snip many more properties/methods
     }
+```
 
 Roads, towns and cities are placed on intersections of these hexagons:
 
@@ -27,6 +29,7 @@ Roads, towns and cities are placed on intersections of these hexagons:
 
 An `Edge` uses two `Location`s as unique identification:
 
+```csharp
     [TestMethod]
     public void Points_AreCorrect2Points()
     {
@@ -36,9 +39,11 @@ An `Edge` uses two `Location`s as unique identification:
         Assert.IsTrue(points.Contains(new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(1,  0, -1))));
         Assert.IsTrue(points.Contains(new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(0, -1,  1))));
     }
+```
 
 A `Point` uses three `Location`s as unique identification.
 
+```csharp
     var point = new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(1,0,-1));
     var neighbors = point.Neighbors;
 
@@ -46,6 +51,7 @@ A `Point` uses three `Location`s as unique identification.
     Assert.IsTrue(neighbors.Contains(new Point(new Location(0,0,0), new Location(1, 0, -1), new Location(0, 1, -1))));
     Assert.IsTrue(neighbors.Contains(new Point(new Location(0,0,0), new Location(1, -1, -0), new Location(0, -1, 1))));
     Assert.IsTrue(neighbors.Contains(new Point(new Location(1,-1,0), new Location(2, -1, -1), new Location(1, 0, -1))));        
+```
 
 To summarize: A Hexagon is represented by an `IHex`, which has a `Location`. Vertices between hexagons are called `Point`. Edges between two hexagons are called `Edge`:
 
@@ -54,12 +60,13 @@ To summarize: A Hexagon is represented by an `IHex`, which has a `Location`. Ver
 Examples:
 - Can the player trade with the bank?
 
+```csharp
     var resources = new ResourceList(new Timber, new Timber(), new Sheep(), new Clay());
     var ports = new PortList(new FourToOnePort, new ThreeToOnePort(), new TimberPort());
     var amountTradesWithBank = ports.AmountGold(resources)
 
     Assert.AreEqual(1, amountTradesWithBank);
-
+```
 
 - Create a new board and setup for play:
 
@@ -74,6 +81,7 @@ Examples:
 
 - Get neighbours of hexagon intersections (vertices)
 
+```csharp
     var point = new Point(new Location(0,0,0), new Location(1, -1, 0), new Location(1,0,-1));
     var neighbors = point.Neighbors;
 
@@ -81,3 +89,4 @@ Examples:
     Assert.IsTrue(neighbors.Contains(new Point(new Location(0,0,0), new Location(1, 0, -1), new Location(0, 1, -1))));
     Assert.IsTrue(neighbors.Contains(new Point(new Location(0,0,0), new Location(1, -1, -0), new Location(0, -1, 1))));
     Assert.IsTrue(neighbors.Contains(new Point(new Location(1,-1,0), new Location(2, -1, -1), new Location(1, 0, -1))));
+```
