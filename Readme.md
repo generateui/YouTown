@@ -63,12 +63,14 @@ Examples:
 
 - Create a new board and setup for play:
 
+```csharp
     IBoard board = new ConcentricBoard(4);
     var chits = Standard4PBoard.Chitlist;
     var ports = Standard4PBoard.Portlist;
     var hexes = Standard4PBoard.Hexlist;
     var random = new DotNetRandom();
     IBoard boardNowReadyForPlay = board.Setup(hexes, chits, ports, random);
+```
 
 - Get neighbours of hexagon intersections (vertices)
 
