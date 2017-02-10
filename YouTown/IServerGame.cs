@@ -12,5 +12,12 @@ namespace YouTown
         IList<IUser> Users { get; }
         IDictionary<IUser, IPlayer> PlayersByUser { get; }
         ISetupOptions SetupOptions { get; }
+
+        IPlayTurnsTurn GetNextTurn();
+//        {
+//            var number = Turn.Number + 1;
+//            var player = game.Players.Next(Turn.Player);
+//            return new PlayTurnsTurn(number, player);
+//        }
     }
 }

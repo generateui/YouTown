@@ -91,6 +91,7 @@
     <Compile Include="GameAction\TradeWithPlayer.cs" />
     <Compile Include="IActionQueue.cs" />
     <Compile Include="IPlayerList.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="IServerGame.cs" />
     <Compile Include="IBank.cs" />
     <Compile Include="IBoard.cs" />

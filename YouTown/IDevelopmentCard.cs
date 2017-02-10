@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace YouTown
 {
-    public class DevelopmentCardType
+    public sealed class DevelopmentCardType
     {
-        private string _type;
-        private Func<int, IDevelopmentCard> _factory;
+        private readonly string _type;
+        private readonly Func<int, IDevelopmentCard> _factory;
 
         public DevelopmentCardType(string type, Func<int, IDevelopmentCard> factory)
         {
@@ -17,25 +17,17 @@ namespace YouTown
 
         public IDevelopmentCard Create(int id) => _factory(id);
 
-        protected bool Equals(DevelopmentCardType other)
-        {
-            return string.Equals(_type, other._type);
-        }
-
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((DevelopmentCardType) obj);
+            return string.Equals(_type, ((DevelopmentCardType)obj)._type);
         }
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return _type?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => _type?.GetHashCode() ?? 0;
 
         /// <inheritdoc />
         public override string ToString() => _type;
@@ -43,6 +35,7 @@ namespace YouTown
 
     public interface IDevelopmentCard : IPiece
     {
+        new IPlayer Player { get; set; }
         DevelopmentCardType DevelopmentCardType { get; }
         bool MaxOnePerTurn { get; }
         bool WaitOneTurnBeforePlay { get; }
@@ -51,8 +44,8 @@ namespace YouTown
 //        bool gameAllowed(GamePhase phase);
 //        void AddToBoard(IBoard board);
 //        void RemoveFromBoard(IBoard board);
-        ITurn TurnBought { get; set; }
-        ITurn TurnPlayed { get; set; }
+        IPlayTurnsTurn TurnBought { get; set; }
+        IPlayTurnsTurn TurnPlayed { get; set; }
         void Play(IGame game);
         void PerformAtServer(IServerGame serverGame);
     }
@@ -73,8 +66,8 @@ namespace YouTown
         public virtual bool MaxOnePerTurn { get; }
         public virtual bool WaitOneTurnBeforePlay { get; }
         public virtual bool MoveToStockAfterPlay { get; }
-        public ITurn TurnBought { get; set; }
-        public ITurn TurnPlayed { get; set; }
+        public IPlayTurnsTurn TurnBought { get; set; }
+        public IPlayTurnsTurn TurnPlayed { get; set; }
         public IPlayer Player { get; set; }
         public PieceType PieceType => DevelopmentCardPieceType;
         public bool AffectsRoad => false;
@@ -106,6 +99,17 @@ namespace YouTown
 
         public void RemoveFromBoard(IBoard board)
         {
+        }
+    }
+
+    public class DummyDevelopmentCard : DevelopmentCardBase
+    {
+        public static DevelopmentCardType VictoryPointCardType =
+            new DevelopmentCardType("DummyDevelopmentCard", id => new DummyDevelopmentCard(id));
+
+        public DummyDevelopmentCard(int id = Identifier.DontCare)
+        {
+            Id = id;
         }
     }
 
@@ -245,15 +249,9 @@ namespace YouTown
                 player.Pieces.Remove(this);
             }
 
-            public void AddToBoard(IBoard board)
-            {
-                throw new System.NotImplementedException();
-            }
+            public void AddToBoard(IBoard board) { }
 
-            public void RemoveFromBoard(IBoard board)
-            {
-                throw new System.NotImplementedException();
-            }
+            public void RemoveFromBoard(IBoard board) { }
         }
 
         public static DevelopmentCardType RoadBuildingType = new DevelopmentCardType("RoadBuilding", id => new RoadBuilding(id));

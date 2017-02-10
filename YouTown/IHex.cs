@@ -43,7 +43,7 @@ namespace YouTown
 
         /// Mutable as gameplays exist where chits can be moved, removed and discovered
         IChit Chit { get; set; }
-        IPort Port { get; }
+        IPort Port { get; set; }
         IResource Produce();
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace YouTown
         public virtual bool ProducesResource { get; }
         public IChit Chit { get; set; }
 
-        public IPort Port { get; }
+        public IPort Port { get; set; }
 
         public virtual IResource Produce()
         {
@@ -99,7 +99,7 @@ namespace YouTown
 
     public class RandomHex : HexBase
     {
-        public RandomHex(int id, Location location, IPort port) : base(id, location, port) { }
+        public RandomHex(int id = Identifier.DontCare, Location location = null, IPort port = null) : base(id, location, port) { }
         public override bool IsRandom => true;
         public override Color Color => Color.Black;
     }

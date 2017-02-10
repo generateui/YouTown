@@ -146,7 +146,7 @@ namespace YouTown
             }
         }
 
-        private Queue<IItem> _queue = new Queue<IItem>();
+        private readonly Queue<IItem> _queue = new Queue<IItem>();
 
         public bool Satisfies(IGameAction toPlay, bool mustBePresent = false)
         {

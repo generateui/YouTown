@@ -110,13 +110,26 @@ namespace YouTown
         }
     }
 
+    /// <summary>
+    /// Unknown resource as seen from an opponent's perspective
+    /// </summary>
+    /// Whan player x gains resources, he *will* see what player y gets in terms of
+    /// production. However, the resource itself in the list of resource the opponent
+    /// has in hand in concealed client-side. The server will issue a dummy resource.
+    public class DummyResource : ResourceBase
+    {
+        public static readonly ResourceType DummyResourceType =
+            new ResourceType("DummyResource", Color.White, id => new DummyResource(id));
+
+        public DummyResource(int id = Identifier.DontCare) : base(id) { }
+        public override ResourceType ResourceType => DummyResourceType;
+    }
+
     public class Wheat : ResourceBase
     {
         public static readonly ResourceType WheatType = 
             new ResourceType("wheat", Color.DarkYellow, id => new Wheat(id));
-        public Wheat(int id = Identifier.DontCare) : base(id)
-        {
-        }
+        public Wheat(int id = Identifier.DontCare) : base(id) { }
         public override bool IsTradeable => true;
         public override ResourceType ResourceType => WheatType;
     }
@@ -125,9 +138,7 @@ namespace YouTown
     {
         public static readonly ResourceType TimberType = 
             new ResourceType("timber", Color.DarkGreen, id => new Timber(id));
-        public Timber(int id = Identifier.DontCare) : base(id)
-        {
-        }
+        public Timber(int id = Identifier.DontCare) : base(id) { }
         public override bool IsTradeable => true;
         public override ResourceType ResourceType => TimberType;
     }
@@ -136,9 +147,7 @@ namespace YouTown
     {
         public static readonly ResourceType ClayType = 
             new ResourceType("clay", Color.Red, id => new Clay(id));
-        public Clay(int id = Identifier.DontCare) : base(id)
-        {
-        }
+        public Clay(int id = Identifier.DontCare) : base(id) { }
         public override bool IsTradeable => true;
         public override ResourceType ResourceType => ClayType;
     }
@@ -147,9 +156,7 @@ namespace YouTown
     {
         public static readonly ResourceType OreType = 
             new ResourceType("ore", Color.Purple, id => new Ore(id));
-        public Ore(int id = Identifier.DontCare) : base(id)
-        {
-        }
+        public Ore(int id = Identifier.DontCare) : base(id) { }
         public override bool IsTradeable => true;
         public override ResourceType ResourceType => OreType;
     }
@@ -158,9 +165,7 @@ namespace YouTown
     {
         public static readonly ResourceType SheepType = 
             new ResourceType("sheep", Color.LightGreen, id => new Sheep(id));
-        public Sheep(int id = Identifier.DontCare) : base(id)
-        {
-        }
+        public Sheep(int id = Identifier.DontCare) : base(id) { }
         public override bool IsTradeable => true;
         public override ResourceType ResourceType => SheepType;
     }

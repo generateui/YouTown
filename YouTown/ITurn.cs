@@ -11,7 +11,7 @@ namespace YouTown
         IPlayer Player { get; }
     }
 
-    public interface IPlayTurnsTurn : ITurn
+    public interface IPlayTurnsTurn : ITurn, IGameItem
     {
         bool HasPlayedDevelopmentCard { get; set; }
         IList<TradeOffer> TradeOffers { get; }
@@ -31,12 +31,14 @@ namespace YouTown
 
     public class PlayTurnsTurn : IPlayTurnsTurn
     {
-        public PlayTurnsTurn(int number, IPlayer player)
+        public PlayTurnsTurn(int id, int number, IPlayer player)
         {
             Number = number;
             Player = player;
+            Id = id;
         }
 
+        public int Id { get; }
         public int Number { get; }
         public IPlayer Player { get; }
         public bool HasPlayedDevelopmentCard { get; set; }

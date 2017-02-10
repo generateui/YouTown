@@ -39,14 +39,14 @@ namespace YouTown.GameAction
             // - add the users
 //            Game.Status = new Playing()
             var players = new List<IPlayer>();
+            var identifier = serverGame.Identifier;
             foreach (IUser user in serverGame.Users)
             {
-                var player = new Player(user);
+                var player = new Player(identifier.NewId(), user);
                 players.Add(player);
                 serverGame.PlayersByUser[user] = player;
             }
             var options = serverGame.SetupOptions;
-            var identifier = serverGame.Identifier;
             foreach (IPlayer player in players)
             {
                 var roads = new List<IPiece>();

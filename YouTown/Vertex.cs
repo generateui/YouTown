@@ -5,19 +5,20 @@ namespace YouTown
 {
     public class Vertex
     {
-        private readonly Location _location1;
-        private readonly Location _location2;
-        private readonly Location _location3;
         private List<Edge> _edges;
         private List<Vertex> _neighbors;
         private List<Location> _locations;
 
         public Vertex(Location location1, Location location2, Location location3)
         {
-            _location1 = location1;
-            _location2 = location2;
-            _location3 = location3;
+            Location1 = location1;
+            Location2 = location2;
+            Location3 = location3;
         }
+
+        public Location Location1 { get; }
+        public Location Location2 { get; }
+        public Location Location3 { get; }
 
         public IList<Edge> Edges
         {
@@ -27,9 +28,9 @@ namespace YouTown
                 {
                     _edges = new List<Edge>
                     {
-                        new Edge(_location1, _location2),
-                        new Edge(_location1, _location3),
-                        new Edge(_location2, _location3),
+                        new Edge(Location1, Location2),
+                        new Edge(Location1, Location3),
+                        new Edge(Location2, Location3),
                     };
                 }
                 return _edges;
@@ -44,9 +45,9 @@ namespace YouTown
                 {
                     _locations = new List<Location>
                     {
-                        _location1,
-                        _location2,
-                        _location3
+                        Location1,
+                        Location2,
+                        Location3
                     };
                 }
                 return _locations;
@@ -65,36 +66,36 @@ namespace YouTown
                 // This can probably be simplified
                 var firstSecondNeighbor = Enumerable
                     .Empty<Location>()
-                    .Concat(_location1.Neighbors)
-                    .Concat(_location2.Neighbors)
+                    .Concat(Location1.Neighbors)
+                    .Concat(Location2.Neighbors)
                     .GroupBy(hl => hl)
                     .Where(g => g.Count() == 2)
                     .Select(g => g.Key)
-                    .FirstOrDefault(hl => !hl.Equals(_location3));
+                    .FirstOrDefault(hl => !hl.Equals(Location3));
 
                 var firstThirdNeighbor = Enumerable
                     .Empty<Location>()
-                    .Concat(_location1.Neighbors)
-                    .Concat(_location3.Neighbors)
+                    .Concat(Location1.Neighbors)
+                    .Concat(Location3.Neighbors)
                     .GroupBy(hl => hl)
                     .Where(g => g.Count() == 2)
                     .Select(g => g.Key)
-                    .FirstOrDefault(hl => !hl.Equals(_location2));
+                    .FirstOrDefault(hl => !hl.Equals(Location2));
 
                 var secondThirdNeighbor = Enumerable
                     .Empty<Location>()
-                    .Concat(_location2.Neighbors)
-                    .Concat(_location3.Neighbors)
+                    .Concat(Location2.Neighbors)
+                    .Concat(Location3.Neighbors)
                     .GroupBy(hl => hl)
                     .Where(g => g.Count() == 2)
                     .Select(g => g.Key)
-                    .FirstOrDefault(hl => !hl.Equals(_location1));
+                    .FirstOrDefault(hl => !hl.Equals(Location1));
 
                 _neighbors = new List<Vertex>
                 {
-                    new Vertex(_location1, _location2, firstSecondNeighbor),
-                    new Vertex(_location1, _location3, firstThirdNeighbor),
-                    new Vertex(_location2, _location3, secondThirdNeighbor)
+                    new Vertex(Location1, Location2, firstSecondNeighbor),
+                    new Vertex(Location1, Location3, firstThirdNeighbor),
+                    new Vertex(Location2, Location3, secondThirdNeighbor)
                 };
                 return _neighbors;
             }
@@ -102,29 +103,29 @@ namespace YouTown
 
         protected bool Equals(Vertex other)
         {
-            return (Equals(_location1, other._location1) &&
-                    Equals(_location2, other._location2) &&
-                    Equals(_location3, other._location3)) ||
+            return (Equals(Location1, other.Location1) &&
+                    Equals(Location2, other.Location2) &&
+                    Equals(Location3, other.Location3)) ||
 
-                   (Equals(_location1, other._location1) &&
-                    Equals(_location2, other._location3) &&
-                    Equals(_location3, other._location2)) ||
+                   (Equals(Location1, other.Location1) &&
+                    Equals(Location2, other.Location3) &&
+                    Equals(Location3, other.Location2)) ||
 
-                   (Equals(_location1, other._location2) &&
-                    Equals(_location2, other._location1) &&
-                    Equals(_location3, other._location3)) ||
+                   (Equals(Location1, other.Location2) &&
+                    Equals(Location2, other.Location1) &&
+                    Equals(Location3, other.Location3)) ||
 
-                   (Equals(_location1, other._location2) &&
-                    Equals(_location2, other._location3) &&
-                    Equals(_location3, other._location1)) ||
+                   (Equals(Location1, other.Location2) &&
+                    Equals(Location2, other.Location3) &&
+                    Equals(Location3, other.Location1)) ||
 
-                   (Equals(_location1, other._location3) &&
-                    Equals(_location2, other._location2) &&
-                    Equals(_location3, other._location1)) ||
+                   (Equals(Location1, other.Location3) &&
+                    Equals(Location2, other.Location2) &&
+                    Equals(Location3, other.Location1)) ||
 
-                   (Equals(_location1, other._location3) &&
-                    Equals(_location2, other._location1) &&
-                    Equals(_location3, other._location2));
+                   (Equals(Location1, other.Location3) &&
+                    Equals(Location2, other.Location1) &&
+                    Equals(Location3, other.Location2));
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
@@ -144,9 +145,9 @@ namespace YouTown
         {
             unchecked
             {
-                var hashCode = _location1?.GetHashCode() ?? 0;
-                hashCode = (hashCode*397) * (_location2?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) * (_location3?.GetHashCode() ?? 0);
+                var hashCode = Location1?.GetHashCode() ?? 0;
+                hashCode = (hashCode*397) * (Location2?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) * (Location3?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }
@@ -155,7 +156,7 @@ namespace YouTown
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Location1: {_location1}, Location2: {_location2}, Location3: {_location3}";
+            return $"Location1: {Location1}, Location2: {Location2}, Location3: {Location3}";
         }
     }
 }

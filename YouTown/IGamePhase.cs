@@ -213,11 +213,10 @@ namespace YouTown
             }
         }
 
-        public void MoveToNextTurn(IGame game)
+        public void MoveToNextTurn(IPlayTurnsTurn nextTurn)
         {
-            var number = Turn.Number + 1;
-            var player = game.Players.Next(Turn.Player);
-            Turn = new PlayTurnsTurn(number, player);
+            Turns.Add(nextTurn);
+            Turn = nextTurn;
         }
 
         public override Production RollDice(IGame game, DiceRoll diceRoll, IPlayer player)

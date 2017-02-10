@@ -35,7 +35,7 @@ namespace YouTown
         public override string ToString() => _color;
     }
 
-    public interface IPlayer
+    public interface IPlayer : IGameItem
     {
         IUser User { get; }
         PlayerColor Color { get; } //TODO: introduce PlayerColor
@@ -65,12 +65,14 @@ namespace YouTown
 
     public class Player : IPlayer
     {
-        public Player(IUser user)
+        public Player(int id,IUser user)
         {
+            Id = id;
             User = user;
             Color = user.Color;
         }
 
+        public int Id { get; }
         public IUser User { get; }
         public PlayerColor Color { get; }
         public bool IsOnTurn { get; set; } = false;
@@ -99,5 +101,6 @@ namespace YouTown
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

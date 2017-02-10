@@ -18,6 +18,7 @@ namespace YouTown.GameAction
         public ITurnPhase TurnPhase { get; private set; }
         public IGamePhase GamePhase { get; private set; }
         public ITurn Turn { get; private set; }
+        public IPlayTurnsTurn NextTurn { get; private set; }
         public bool IsAllowedInOpponentTurn => false;
 
         public bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
@@ -27,6 +28,7 @@ namespace YouTown.GameAction
 
         public void PerformAtServer(IServerGame serverGame)
         {
+            NextTurn = serverGame.GetNextTurn();
         }
 
         public void Perform(IGame game)
@@ -36,7 +38,7 @@ namespace YouTown.GameAction
             {
                 token.RemoveFromPlayer(Player);
             }
-            game.PlayTurns.MoveToNextTurn(game);
+            game.PlayTurns.MoveToNextTurn(NextTurn);
 
             TurnPhase = game.PlayTurns.TurnPhase;
             GamePhase = game.GamePhase;

@@ -13,11 +13,27 @@ struct EdgeData
 	1: LocationData Location2;
 }
 
-struct PointData
+struct VertexData
 {
 	0: LocationData Location1;
 	1: LocationData Location2;
 	2: LocationData Location3;
+}
+
+enum ResourceTypeData
+{
+	Timber,
+	Wheat,
+	Sheep,
+	Clay,
+	Ore,
+	Dummy,
+}
+
+struct ResourceData 
+{
+	0: int32 Id;
+	1: ResourceTypeData ResourceType = Timber;
 }
 
 enum ChitTypeData 
@@ -38,7 +54,7 @@ enum ChitTypeData
 struct ChitData
 {
 	0: int32 Id;
-	1: int32 Number;
+	1: ChitTypeData ChitType = Chit2;
 }
 
 enum PortTypeData
@@ -57,12 +73,14 @@ struct PortData
 {
 	0: int32 Id;
 	1: PortTypeData PortType = FourToOne;
+	2: nullable<LocationData> WaterLocation;
+	3: nullable<LocationData> LandLocation;
 }
 
 enum HexTypeData
 {
-	Field,
 	Forest,
+	Field,
 	Pasture,
 	Hill,
 	Mountain,
@@ -74,6 +92,69 @@ enum HexTypeData
 struct HexData
 {
 	0: int32 Id;
-	1: HexTypeData HexType = Field;
+	1: HexTypeData HexType = Forest;
 	2: LocationData Location;
+	3: nullable<ChitData> Chit;
+	4: nullable<PortData> Port;
+}
+
+enum PieceTypeData 
+{
+	Road,
+	Town,
+	City,
+	RoadBuildingToken,
+}
+
+struct PieceData 
+{
+	0: int32 Id;
+	1: PieceTypeData PieceType = Road;
+	2: nullable<int32> PlayerId;
+	3: nullable<VertexData> Vertex;
+	4: nullable<EdgeData> Edge;
+}
+
+enum DevelopmentCardTypeData
+{
+	Soldier,
+	VictoryPoint,
+	Invention,
+	Monopoly,
+	RoadBuilding,
+	Dummy,
+}
+
+struct DevelopmentCardData
+{
+	0: int32 Id;
+	1: DevelopmentCardTypeData DevelopmentCardType = Soldier;
+	2: nullable<int32> PlayerId;
+	3: nullable<int32> TurnBoughtId;
+	4: nullable<int32> TurnPlayedId;
+}
+
+struct SoldierData : DevelopmentCardData { }
+struct VictoryPointCardData : DevelopmentCardData { }
+struct DummyDevelopmentCardData : DevelopmentCardData { }
+
+struct InventionData : DevelopmentCardData
+{
+	0: vector<ResourceData> PickedResources;
+}
+
+struct MonopolyData : DevelopmentCardData
+{
+	0: string PickedResourceType;
+}
+
+struct RoadBuildingTokenData
+{
+	0: int32 Id;
+	1: int32 PlayerId;
+}
+
+struct RoadBuildingData : DevelopmentCardData
+{
+	0: vector<RoadBuildingTokenData> Tokens;
 }
