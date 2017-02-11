@@ -4,7 +4,7 @@ using YouTown.GameAction;
 
 namespace YouTown
 {
-    public interface IGamePhase
+    public interface IGamePhase : IGameItem
     {
         bool IsSetup { get; }
         bool IsDetermineFirstPlayer { get; }
@@ -22,6 +22,12 @@ namespace YouTown
 
     public abstract class GamePhaseBase
     {
+        protected GamePhaseBase(int id)
+        {
+            Id = id;
+        }
+
+        public int Id { get; }
         public virtual bool IsSetup => false;
         public virtual bool IsDetermineFirstPlayer => false;
         public virtual bool IsInitialPlacement => false;
@@ -48,6 +54,7 @@ namespace YouTown
     /// as default implementation.
     public class DetermineFirstPlayer : GamePhaseBase, IGamePhase
     {
+        public DetermineFirstPlayer(int id) : base(id) { }
         public override bool IsDetermineFirstPlayer => true;
 
         public void Start(IGame game)
@@ -57,6 +64,7 @@ namespace YouTown
         public void End(IGame game)
         {
         }
+
     }
 
     /// <summary>
@@ -69,6 +77,7 @@ namespace YouTown
     /// bank clarify what's in the game.
     public class SetupGamePhase : GamePhaseBase, IGamePhase
     {
+        public SetupGamePhase(int id) : base(id) { }
         public override bool IsSetup => true;
         public void Start(IGame game)
         {
@@ -86,15 +95,34 @@ namespace YouTown
     /// roads. The order then is town+road, (other players), city+road+road.
     public class PlaceInitialPieces : GamePhaseBase, IGamePhase
     {
+        public PlaceInitialPieces(int id) : base(id) { }
+        public PlaceInitialPieces(PlaceInitialPiecesData data, IRepository repo) : base(data.Id)
+        {
+            Turns = data.Turns.Select(td => new PlaceTurn(td, repo)).ToList();
+            repo.AddAll(Turns);
+
+            RoadsBuilt = data.RoadsBuiltCount;
+            PlayerOnTurn = repo.GetOrNull<IPlayer>(data.PlayerOnTurnId);
+        }
+
+        public List<PlaceTurn> Turns { get; } = new List<PlaceTurn>();
+        public int RoadsBuilt { get; private set; }
+        public IPlayer PlayerOnTurn { get; private set; }
+
         public override bool IsInitialPlacement => true;
-        private List<PlaceTurn> _turns = new List<PlaceTurn>();
-        private IPlayer _playerOnTurn;
-        private int _roadsBuilt;
+
+        public PlaceInitialPiecesData ToData() =>
+            new PlaceInitialPiecesData
+            {
+                Turns = Turns.Select(t => t.ToData()).ToList(),
+                RoadsBuiltCount = RoadsBuilt,
+                PlayerOnTurnId = PlayerOnTurn?.Id,
+            };
 
         public void Start(IGame game)
         {
-            _playerOnTurn = game.Players.First();
-            _playerOnTurn.IsOnTurn = true;
+            PlayerOnTurn = game.Players.First();
+            PlayerOnTurn.IsOnTurn = true;
         }
 
         public void End(IGame game)
@@ -103,30 +131,30 @@ namespace YouTown
 
         public override void BuildRoad(IGame game, IPlayer player, Road road)
         {
-            _roadsBuilt++;
-            bool to = _roadsBuilt < game.Players.Count;
-            bool halfway = _roadsBuilt == game.Players.Count;
-            bool back = _roadsBuilt > game.Players.Count;
-            _playerOnTurn.IsOnTurn = false;
+            RoadsBuilt++;
+            bool to = RoadsBuilt < game.Players.Count;
+            bool halfway = RoadsBuilt == game.Players.Count;
+            bool back = RoadsBuilt > game.Players.Count;
+            PlayerOnTurn.IsOnTurn = false;
             if (to)
             {
-                var index = game.Players.IndexOf(_playerOnTurn) + 1;
-                _playerOnTurn = game.Players[index];
+                var index = game.Players.IndexOf(PlayerOnTurn) + 1;
+                PlayerOnTurn = game.Players[index];
             } else if (halfway)
             {
                 // nothing, player stays "on turn"
-            } else if (back && _playerOnTurn.Equals(game.Players.First()))
+            } else if (back && PlayerOnTurn.Equals(game.Players.First()))
             {
                 // nothing, player stays "on turn"
             }
             else
             {
-                var index = game.Players.IndexOf(_playerOnTurn) - 1;
-                _playerOnTurn = game.Players[index];
+                var index = game.Players.IndexOf(PlayerOnTurn) - 1;
+                PlayerOnTurn = game.Players[index];
             }
-            _playerOnTurn.IsOnTurn = true;
+            PlayerOnTurn.IsOnTurn = true;
             int expectedAmountRoadsBuilt = game.Players.Count * 2;
-            if (_roadsBuilt == expectedAmountRoadsBuilt)
+            if (RoadsBuilt == expectedAmountRoadsBuilt)
             {
                 game.MoveToNextPhase();
             }
@@ -158,20 +186,69 @@ namespace YouTown
     /// </summary>
     public class PlayTurns : GamePhaseBase, IGamePhase
     {
-        private readonly BeforeDiceRoll _beforeDiceRoll = new BeforeDiceRoll();
-        private readonly RollDicePhase _diceRoll = new RollDicePhase();
-        private readonly Trading _trading = new Trading();
-        private readonly Building _building = new Building();
+        private readonly BeforeDiceRoll _beforeDiceRoll;
+        private readonly RollDicePhase _diceRoll;
+        private readonly Trading _trading;
+        private readonly Building _building;
 
-        public PlayTurns()
+        public PlayTurns(int id, IRepository repo, IIdentifier identifier) : base(id)
         {
             Turns = new List<IPlayTurnsTurn>();
             TurnPhase = _beforeDiceRoll;
+            _beforeDiceRoll = new BeforeDiceRoll(identifier.NewId());
+            _diceRoll = new RollDicePhase(identifier.NewId());
+            _trading = new Trading(identifier.NewId());
+            _building = new Building(identifier.NewId());
+            repo.AddAll(_beforeDiceRoll, _diceRoll, _trading, _building);
         }
+
+        public PlayTurns(PlayTurnsData data, IRepository repo) : base(data.Id)
+        {
+            _beforeDiceRoll = new BeforeDiceRoll(data.BeforeDiceRoll.Id);
+            _diceRoll = new RollDicePhase(data.DiceRoll.Id);
+            _trading = new Trading(data.Trading.Id);
+            _building = new Building(data.Trading.Id);
+            repo.AddAll(_beforeDiceRoll, _diceRoll, _trading, _building);
+
+            Turns = data.Turns.Select(td => td.FromData(repo)).Cast<IPlayTurnsTurn>().ToList();
+            repo.AddAll(Turns);
+
+            Turn = repo.GetOrNull<IPlayTurnsTurn>(data.TurnId);
+            TurnPhase = repo.GetOrNull<ITurnPhase>(data.TurnPhaseId);
+        }
+
         public override bool IsTurns => true;
         public IList<IPlayTurnsTurn> Turns { get; }
         public IPlayTurnsTurn Turn { get; private set; }
         public ITurnPhase TurnPhase { get; private set; }
+
+        public PlayTurnsData ToData() =>
+            new PlayTurnsData
+            {
+                BeforeDiceRoll = new BeforeDiceRollData
+                {
+                    Id = _beforeDiceRoll.Id,
+                    TurnPhaseType = TurnPhaseTypeData.BeforeDiceRoll
+                },
+                DiceRoll = new DiceRollTurnPhaseData
+                {
+                    Id = _diceRoll.Id,
+                    TurnPhaseType = TurnPhaseTypeData.RollDice
+                },
+                Trading = new TradingData
+                {
+                    Id = _trading.Id,
+                    TurnPhaseType = TurnPhaseTypeData.Trading
+                },
+                Building = new BuildingData
+                {
+                    Id = _building.Id,
+                    TurnPhaseType = TurnPhaseTypeData.Building
+                },
+                Turns = Turns.Select(t => t.ToData()).ToList(),
+                TurnId = Turn?.Id,
+                TurnPhaseId = TurnPhase?.Id
+            };
 
         public void Start(IGame game)
         {
@@ -340,6 +417,7 @@ namespace YouTown
 
     public class EndOfGame : GamePhaseBase, IGamePhase
     {
+        public EndOfGame(int id) : base(id) { }
         public override bool IsEnd => true;
 
         public void Start(IGame game)

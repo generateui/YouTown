@@ -36,6 +36,11 @@ namespace YouTown
         protected readonly Dictionary<ResourceType, List<IResource>> _resources = 
             new Dictionary<ResourceType, List<IResource>>();
 
+        public ResourceList(List<ResourceData> data)
+        {
+            
+        }
+
         public ResourceList(IEnumerable<IResource> list)
         {
             AddRangeSafe(list);

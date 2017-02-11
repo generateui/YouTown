@@ -17,11 +17,24 @@ namespace YouTown
             Debug.Assert(Location1.X == Location2.X || Location1.Y == Location2.Y || Location1.Z == Location2.Z);
         }
 
+        public Edge(EdgeData data)
+        {
+            Location1 = new Location(data.Location1);
+            Location2 = new Location(data.Location2);
+        }
+
         public Location Location1 { get; }
         public Location Location2 { get; }
 
         public Vertex Vertex1 => Vertices[0];
         public Vertex Vertex2 => Vertices[1];
+
+        public EdgeData ToData() => 
+            new EdgeData
+            {
+                Location1 = Location1.ToData(),
+                Location2 = Location2.ToData(),
+            };
 
         public IList<Location> Locations
         {

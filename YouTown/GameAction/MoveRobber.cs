@@ -2,50 +2,43 @@
 
 namespace YouTown.GameAction
 {
-    public class MoveRobber : IGameAction
+    public class MoveRobber : GameActionBase
     {
         public static ActionType MoveRobberType = new ActionType("MoveRobber");
-        public MoveRobber(IPlayer player)
+
+        public MoveRobber(IPlayer player) : base(player) { }
+        public MoveRobber(int id, IPlayer player) : base(id, player) { }
+
+        public MoveRobber(MoveRobberData data, IRepository repo) : base(data, repo)
         {
-            Player = player;
+            Location = data.Location != null ? new Location(data.Location) : null;
         }
 
-        public MoveRobber(int id, IPlayer player)
-        {
-            Id = id;
-            Player = player;
-        }
-
-        public int Id { get; }
-        public ActionType ActionType => MoveRobberType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => MoveRobberType;
         public Location Location { get; set; }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBeforeDiceRoll || tp.IsDiceRoll || tp.IsBuilding;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBeforeDiceRoll || tp.IsDiceRoll || tp.IsBuilding;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new MoveRobberData
+            {
+                GameActionType = GameActionTypeData.MoveRobber,
+                Location = Location?.ToData()
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(Location)
-                .With<HasHexAt, IBoard, Location>(game.Board, Location)
-                .With<CanPlaceRobberAt, IBoard, Location>(game.Board, Location)
+                .With<HasHexAt, IBoardForPlay, Location>(game.Board, Location)
+                .With<CanPlaceRobberAt, IBoardForPlay, Location>(game.Board, Location)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
-        {
-        }
-
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             game.Board.Robber.Location = Location;
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

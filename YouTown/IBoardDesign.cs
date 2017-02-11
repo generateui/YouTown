@@ -4,37 +4,53 @@ using System.Linq;
 
 namespace YouTown
 {
-    public interface IBoard
+    /// <summary>
+    /// A board representing a design which can be transformed to a board 
+    /// used in the game
+    /// </summary>
+    public interface IBoardDesign
     {
+        string Name { get; }
+
         IReadOnlyDictionary<Location, IHex> HexesByLocation { get; }
-        IDictionary<Edge, Road> RoadsByEdge { get; } 
-        IDictionary<Vertex, Town> TownsByVertex { get; } 
-        IDictionary<Vertex, City> CitiesByVertex { get; }
-        IDictionary<Vertex, IVertexPiece> PiecesByVertex { get; } 
-        IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
-        ISet<IProducer> Producers { get; }
-        ISet<IPiece> Pieces { get; }
-        Robber Robber { get; } // TODO: does this belong to IGame or IBoard?
 
         /// <summary>
         /// Uses this instance of board to create a new instance where placeholders for 
         /// hexes, chits and ports are replaced by concrete hexes, chits and ports.
         /// </summary>
         /// <returns>A new instance of type of self</returns>
-        IBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random);
+        IBoardForPlay Setup(IList<IPort> ports, IList<IChit> chits, IList<IHex> hexList, IRandom random);
+    }
+
+    public class BoardDesign : IBoardDesign
+    {
+        public BoardDesign(string name, IReadOnlyDictionary<Location, IHex> hexesByLocation)
+        {
+            Name = name;
+            HexesByLocation = hexesByLocation;
+        }
+
+        public string Name { get; }
+        public IReadOnlyDictionary<Location, IHex> HexesByLocation { get; }
+
+        /// <summary>
+        /// Uses this instance of board to create a new instance where placeholders for 
+        /// hexes, chits and ports are replaced by concrete hexes, chits and ports.
+        /// </summary>
+        /// <returns>A new instance of type of self</returns>
+        public IBoardForPlay Setup(IList<IPort> ports, IList<IChit> chits, IList<IHex> hexList, IRandom random)
+        {
+            // TODO: extract from concentricboard into strategy and call strategy here
+            return null;
+        }
     }
 
     /// <summary>
     /// Board with X concentric circles bordered by a circle of water
     /// </summary>
-    public class ConcentricBoard : IBoard
+    public class ConcentricBoard : IBoardDesign
     {
-        private Dictionary<Location, IHex> _hexesbyLocation = new Dictionary<Location, IHex>();
-
-        private ConcentricBoard(Dictionary<Location, IHex> hexesByLocation)
-        {
-            _hexesbyLocation = new Dictionary<Location, IHex>(hexesByLocation);
-        }
+        private readonly Dictionary<Location, IHex> _hexesbyLocation = new Dictionary<Location, IHex>();
 
         /// <summary>
         /// Creates a new board in a concentric form
@@ -48,8 +64,11 @@ namespace YouTown
         /// <param name="concentricCircles">
         /// Amount of circles used to build the board with. Must be 3 or greater and 10 or less.
         /// </param>
-        public ConcentricBoard(int concentricCircles)
+        /// <param name="guid"></param>
+        /// <param name="name"></param>
+        public ConcentricBoard(int concentricCircles, string name)
         {
+            Name = name;
             if (concentricCircles > 10 || concentricCircles < 2)
             {
                 throw new ArgumentException(nameof(concentricCircles));
@@ -117,17 +136,9 @@ namespace YouTown
             }
         }
 
-        public ISet<IProducer> Producers { get; }
-        public ISet<IPiece> Pieces { get; }
-        public Robber Robber { get; }
-        public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;
-        public IDictionary<Edge, Road> RoadsByEdge { get; }
-        public IDictionary<Vertex, Town> TownsByVertex { get; }
-        public IDictionary<Vertex, City> CitiesByVertex { get; }
-        public IDictionary<Vertex, IVertexPiece> PiecesByVertex { get; }
-        public IDictionary<Edge, IEdgePiece> PiecesByEdge { get; }
-
         public int ConcentricCircles { get; set; }
+        public string Name { get; }
+        public IReadOnlyDictionary<Location, IHex> HexesByLocation => _hexesbyLocation;
 
         /// <summary>
         /// Produces a playable board given the design of the current board
@@ -148,12 +159,12 @@ namespace YouTown
         /// A new board instance ready to play on
         /// </returns>
         /// TODO: move the different algorithms to separate classes for reuse
-        public IBoard Setup(IPortList ports, IChitList chits, IHexList hexList, IRandom random)
+        public IBoardForPlay Setup(IList<IPort> ports, IList<IChit> chits, IList<IHex> hexes, IRandom random)
         {
-            var board = new ConcentricBoard(_hexesbyLocation);
+            var hexesByLocation = new Dictionary<Location, IHex>(_hexesbyLocation);
             // replace randomports with ports
             // if not sufficient concrete ports are delivered, remove the port
-            var portsToReplace = board._hexesbyLocation.Values.Where(h => h.Port != null).ToList();
+            var portsToReplace = hexesByLocation.Values.Where(h => h.Port != null).ToList();
             var replacedPorts = new List<Water>();
             var portz = new List<IPort>(ports);
             while (portz.Any() && portsToReplace.Any())
@@ -165,20 +176,20 @@ namespace YouTown
                 var replaced = new Water(portToReplace.Id, portToReplace.Location, replacement);
                 replacedPorts.Add(replaced);
             }
-            replacedPorts.ForEach(rp => board._hexesbyLocation[rp.Location] = rp);
+            replacedPorts.ForEach(rp => hexesByLocation[rp.Location] = rp);
             // TODO: report port count mismatch
             // Probably want to do some reporting here when the counts differ
             // e.g. "3 port replacements left", "4 port replacements short, did not place port"
             foreach (var hex in portsToReplace)
             {
                 var replaced = new Water(hex.Id, hex.Location, port: null);
-                board._hexesbyLocation[hex.Location] = replaced;
+                hexesByLocation[hex.Location] = replaced;
             }
 
             // replace randomhexes with hexes
-            var hexesToReplace = board._hexesbyLocation.Values.Where(h => h.IsRandom).ToList();
+            var hexesToReplace = hexesByLocation.Values.Where(h => h.IsRandom).ToList();
             var replacedHexes = new List<IHex>();
-            var hexez = new List<IHex>(hexList.Hexes);
+            var hexez = new List<IHex>(hexes);
             while (hexez.Any() && hexesToReplace.Any())
             {
                 var hexToReplace = hexesToReplace.PickRandom(random);
@@ -188,19 +199,19 @@ namespace YouTown
                 var replaced = replacement.Clone(Identifier.DontCare, hexToReplace.Location);
                 replacedHexes.Add(replaced);
             }
-            replacedHexes.ForEach(rh => board._hexesbyLocation[rh.Location] = rh);
+            replacedHexes.ForEach(rh => hexesByLocation[rh.Location] = rh);
             // replace leftover randomhexes with deserts
             foreach (var hex in hexesToReplace)
             {
                 var desert = new Desert(hex.Id, hex.Location);
-                board._hexesbyLocation[hex.Location] = desert;
+                hexesByLocation[hex.Location] = desert;
             }
             // TODO: report hex count mismatch
 
             // replace randomchits with chits
             // TODO: ensure reds dont touch
-            var hexesToPlaceChitOn = board._hexesbyLocation.Values.Where(h => h.CanHaveChit);
-            var chitz = new List<IChit>(chits.Chits);
+            var hexesToPlaceChitOn = hexesByLocation.Values.Where(h => h.CanHaveChit);
+            var chitz = new List<IChit>(chits);
 
             // first place the red chits
             var allowedHexes = hexesToPlaceChitOn.ToList();
@@ -220,7 +231,7 @@ namespace YouTown
                 neighborHexes.ForEach(nh => allowedHexes.Remove(nh));
             }
 
-            hexesToPlaceChitOn = board._hexesbyLocation.Values
+            hexesToPlaceChitOn = hexesByLocation.Values
                 .Where(h => h.CanHaveChit)
                 .Where(h => h.Chit == null)
                 .ToList();
@@ -239,7 +250,7 @@ namespace YouTown
             // TODO: prevent equal chits neighboring each other e.g. 9|9
             // TODO: report chit count mismatch
 
-            return board;
+            return new BoardForPlay(hexesByLocation);
         }
 
     }

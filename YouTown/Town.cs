@@ -58,7 +58,7 @@ namespace YouTown
             player.Producers.Remove(this);
         }
 
-        public void AddToBoard(IBoard board)
+        public void AddToBoard(IBoardForPlay board)
         {
             board.TownsByVertex[Vertex] = this;
             board.PiecesByVertex[Vertex] = this;
@@ -66,7 +66,7 @@ namespace YouTown
             board.Producers.Add(this);
         }
 
-        public void RemoveFromBoard(IBoard board)
+        public void RemoveFromBoard(IBoardForPlay board)
         {
             board.TownsByVertex.Remove(Vertex);
             board.PiecesByVertex.Remove(Vertex);

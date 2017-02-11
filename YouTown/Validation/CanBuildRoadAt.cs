@@ -1,8 +1,8 @@
 ﻿namespace YouTown.Validation
 {
-    public class CanBuildRoadAt : ValidatorBase<Edge, IBoard>
+    public class CanBuildRoadAt : ValidatorBase<Edge, IBoardForPlay>
     {
-        public override IValidationResult Validate(Edge edge, IBoard board, string text = null)
+        public override IValidationResult Validate(Edge edge, IBoardForPlay board, string text = null)
         {
             if (board.PiecesByEdge.ContainsKey(edge))
             {

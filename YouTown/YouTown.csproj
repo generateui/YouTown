@@ -69,6 +69,8 @@
     <Compile Include="City.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="DiceRoll.cs" />
+    <Compile Include="GameAction\GameActionBase.cs" />
+    <Compile Include="ImpureExtensions.cs" />
     <Compile Include="GameAction\AcceptTradeOffer.cs" />
     <Compile Include="GameAction\BuildCity.cs" />
     <Compile Include="GameAction\BuildRoad.cs" />
@@ -90,11 +92,12 @@
     <Compile Include="GameAction\TradeWithBank.cs" />
     <Compile Include="GameAction\TradeWithPlayer.cs" />
     <Compile Include="IActionQueue.cs" />
+    <Compile Include="IBoardForPlay.cs" />
     <Compile Include="IPlayerList.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IServerGame.cs" />
     <Compile Include="IBank.cs" />
-    <Compile Include="IBoard.cs" />
+    <Compile Include="IBoardDesign.cs" />
     <Compile Include="IChit.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Edge.cs" />
@@ -117,6 +120,7 @@
     <Compile Include="ITurnPhase.cs" />
     <Compile Include="IUser.cs" />
     <Compile Include="Produce.cs" />
+    <Compile Include="BondTypeAliasConverter.cs" />
     <Compile Include="TradeOffer.cs" />
     <Compile Include="Validation\CanBuildRoadAt.cs" />
     <Compile Include="Validation\CanBuildTownAt.cs" />
@@ -154,9 +158,7 @@
   <ItemGroup>
     <BondCodegen Include="schema.bond" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

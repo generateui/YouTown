@@ -9,7 +9,7 @@ namespace YouTown.Validation
             {
                 return new Invalid($"player {player.User.Name} is expected to loose {amountToLoose} but wants to loose {amount}");
             }
-            return Validation.Validator.Valid;
+            return Validator.Valid;
         }
     }
 }

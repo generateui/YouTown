@@ -2,9 +2,10 @@
 
 namespace YouTown.GameAction
 {
-    public class TradeWithPlayer : IGameAction
+    public class TradeWithPlayer : GameActionBase
     {
         public static ActionType TradeWithPlayerType = new ActionType("TradeWithPlayer");
+
         // TODO: fix this ridiculously long list
         public TradeWithPlayer(
             int id,
@@ -12,33 +13,44 @@ namespace YouTown.GameAction
             IResourceList offered,
             IResourceList requested,
             IPlayer opponent,
-            TradeOffer tradeOffer)
+            TradeOffer tradeOffer) : base(id, player)
         {
-            Id = id;
-            Player = player;
             Offered = offered;
             Requested = requested;
             Opponent = opponent;
             TradeOffer = tradeOffer;
         }
+        public TradeWithPlayer(TradeWithPlayerData data, IRepository repo) : base(data, repo)
+        {
+            Offered = data.Offered?.FromData();
+            Requested = data.Requested?.FromData();
+            Opponent = repo.GetOrNull<IPlayer>(data.OpponentId);
+            TradeOffer = repo.GetOrNull<TradeOffer>(data.TradeOfferId);
+            Accept = repo.GetOrNull<Accept>(data.AcceptId);
+        }
 
-        public int Id { get; }
-        public ActionType ActionType => TradeWithPlayerType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => TradeWithPlayerType;
         public IResourceList Offered { get; }
         public IResourceList Requested { get; }
         public IPlayer Opponent { get; }
         public TradeOffer TradeOffer { get; }
         public Accept Accept { get; set; }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            ToData(new TradeWithPlayerData
+            {
+                GameActionType = GameActionTypeData.TradeWithPlayer,
+                Offered = Offered?.ToData(),
+                Requested = Requested?.ToData(),
+                OpponentId = Opponent?.Id,
+                TradeOfferId = TradeOffer?.Id,
+                AcceptId = Accept.Id,
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(Offered)
                 .WithObject<NotNull>(Requested)
@@ -49,17 +61,11 @@ namespace YouTown.GameAction
                 .With<HasResponse, TradeOffer, Accept>(TradeOffer, Accept)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
-        {
-        }
-
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             Player.GainResourcesFrom(Offered, Requested, null);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,7 +11,7 @@ namespace YouTown.UnitTest
         [TestMethod]
         public void AfterNew_PortsArePlaced()
         {
-            var cb = new ConcentricBoard(4);
+            var cb = new ConcentricBoard(4, string.Empty);
 
             var waterHexes = cb.HexesByLocation.Values.Where(h => h is Water);
             var randomHexes = cb.HexesByLocation.Values.Where(h => h is RandomHex);
@@ -24,9 +25,9 @@ namespace YouTown.UnitTest
         [TestMethod]
         public void Setup_UsesAllProvidedItems()
         {
-            var cb = new ConcentricBoard(4);
+            var cb = new ConcentricBoard(4, string.Empty);
             
-            var chitList = new ChitList(new List<IChit>
+            var chitList = new List<IChit>
             {
                 new Chit2(),
                 new Chit3(), new Chit3(),
@@ -38,16 +39,16 @@ namespace YouTown.UnitTest
                 new Chit10(), new Chit10(),
                 new Chit11(), new Chit11(),
                 new Chit12()
-            });
-            var hexList = new HexList(new List<IHex>
+            };
+            var hexList = new List<IHex>
             {
                 new Forest(),new Forest(),new Forest(),new Forest(),
                 new Field(),new Field(),new Field(),new Field(),
                 new Pasture(),new Pasture(),new Pasture(),new Pasture(),
                 new Hill(),new Hill(),new Hill(),
                 new Mountain(),new Mountain(),new Mountain(),
-            });
-            var portList = new PortList(new List<IPort>
+            };
+            var portList = new List<IPort>
             {
                 new ThreeToOnePort(),new ThreeToOnePort(),new ThreeToOnePort(),new ThreeToOnePort(),
                 new WheatPort(),
@@ -55,7 +56,7 @@ namespace YouTown.UnitTest
                 new ClayPort(),
                 new SheepPort(),
                 new OrePort()
-            });
+            };
 
             var setupBoard = cb.Setup(portList, chitList, hexList, new DotNetRandom());
 

@@ -2,43 +2,35 @@
 
 namespace YouTown.GameAction
 {
-    public class ClaimVictory : IGameAction
+    public class ClaimVictory : GameActionBase
     {
         public static ActionType ClaimVictoryType = new ActionType("ClaimVictory");
-        public ClaimVictory(int id, IPlayer player)
-        {
-            Id = id;
-            Player = player;
-        }
 
-        public int Id { get; }
-        public ActionType ActionType => ClaimVictoryType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
+        public ClaimVictory(int id, IPlayer player) : base(id, player) { }
+        public ClaimVictory(ClaimVictoryData data, IRepository repo) : base(data, repo) { }
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override ActionType ActionType => ClaimVictoryType;
 
-        public IValidationResult Validate(IGame game) =>
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+
+        public override GameActionData ToData() =>
+            base.ToData(new ClaimVictoryData
+            {
+                GameActionType = GameActionTypeData.ClaimVictory
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .With<HasEnoughVictoryPoints, IPlayer, IGame>(Player, game)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
-        {
-        }
-
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             // TODO: set status here
             game.MoveToNextPhase();
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

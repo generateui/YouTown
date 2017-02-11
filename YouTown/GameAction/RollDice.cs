@@ -2,34 +2,37 @@
 
 namespace YouTown.GameAction
 {
-    public class RollDice : IGameAction
+    public class RollDice : GameActionBase
     {
         public static ActionType RollDiceType = new ActionType("RollDice");
-        public RollDice(int id, IPlayer player)
+
+        public RollDice(int id, IPlayer player) : base(id, player) { }
+        public RollDice(RollDiceData data, IRepository repo) : base(data, repo)
         {
-            Id = id;
-            Player = player;
+            DiceRoll = data.RolledDice != null ? new DiceRoll(data.RolledDice) : null;
+            Production = data.Production != null ? new Production(data.Production, repo) : null;
         }
 
-        public int Id { get; }
-        public ActionType ActionType => RollDiceType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => RollDiceType;
         public DiceRoll DiceRoll { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
         public Production Production { get; private set; }
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsDiceRoll;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns; // TODO: determinefirstplayer
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsDiceRoll;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns; // TODO: determinefirstplayer
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new RollDiceData
+            {
+                GameActionType = GameActionTypeData.RollDice,
+                Production = Production?.ToData(),
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(DiceRoll)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void PerformAtServer(IServerGame serverGame)
         {
             var random = serverGame.Random;
             var die1 = random.NextInt(1, 6);
@@ -37,13 +40,11 @@ namespace YouTown.GameAction
             DiceRoll = new DiceRoll(die1, die2);
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             Production = game.GamePhase.RollDice(game, DiceRoll, Player);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

@@ -4,35 +4,35 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public sealed class StartGame : IGameAction
+    public sealed class StartGame : GameActionBase
     {
         public static ActionType StartGameType = new ActionType("StartGame");
 
-        public StartGame(int id, IPlayer player)
+        public StartGame(int id, IPlayer player) : base(id, player) { }
+        public StartGame(StartGameData data, IRepository repo) : base(data, repo)
         {
-            Id = id;
-            Player = player;
+            Game = data.Game != null ? new Game(data.Game) : null;
         }
 
-        public ActionType ActionType => StartGameType;
-        public int Id { get; }
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => StartGameType;
         public IGame Game { get; set; }
 
-        public bool IsAllowedInOpponentTurn => false;
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => true;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsDetermineFirstPlayer;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => true;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsDetermineFirstPlayer;
+        public override GameActionData ToData() =>
+            ToData(new StartGameData
+            {
+                GameActionType = GameActionTypeData.StartGame,
+                Game = Game?.ToData()
+            });
 
-        public IValidationResult Validate(IGame game)
+        public override IValidationResult Validate(IGame game)
         {
             throw new NotImplementedException();
         }
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void PerformAtServer(IServerGame serverGame)
         {
             // server should 
             // - instantiate the game 
@@ -42,12 +42,14 @@ namespace YouTown.GameAction
             var identifier = serverGame.Identifier;
             foreach (IUser user in serverGame.Users)
             {
-                var player = new Player(identifier.NewId(), user);
+                var player = new Player(identifier.NewId(), user.Color, user);
                 players.Add(player);
                 serverGame.PlayersByUser[user] = player;
             }
             var options = serverGame.SetupOptions;
-            foreach (IPlayer player in players)
+            var playBoard = options.BoardDesign.Setup(options.Ports, options.Chits, options.Hexes, serverGame.Random);
+
+            foreach (var player in players)
             {
                 var roads = new List<IPiece>();
                 for (int i = 0; i < options.RoadCount; i++)
@@ -72,7 +74,6 @@ namespace YouTown.GameAction
 
                 serverGame.DevelopmentCardsByPlayer[player] = new List<IDevelopmentCard>();
             }
-            var playBoard = options.Board.Setup(options.Ports, options.Chits, options.Hexes, serverGame.Random);
 
             var resources = new List<IResource>();
             foreach (KeyValuePair<ResourceType, int> pair in options.ResourceCountByType)
@@ -86,6 +87,7 @@ namespace YouTown.GameAction
                     resources.Add(resource);
                 }
             }
+
             var developmentCards = new List<IDevelopmentCard>();
             foreach (KeyValuePair<DevelopmentCardType, int> pair in options.DevelopmentCardCountByType)
             {
@@ -101,15 +103,20 @@ namespace YouTown.GameAction
 
             var bankResources = new ResourceList(resources);
             var bank = new Bank(bankResources, developmentCards);
+
             var playerList = new PlayerList(players);
             Game = new Game(playBoard, bank, playerList);
+
             Game.LargestArmy = new LargestArmy(identifier.NewId());
+
 //            Game.LongestRoad = new LongestRoad(identifier.NewId());
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             game.GamePhase.Start(game);
+
+            base.Perform(game);
         }
     }
 }

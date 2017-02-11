@@ -46,8 +46,8 @@
 
         void AddToPlayer(IPlayer player);
         void RemoveFromPlayer(IPlayer player);
-        void AddToBoard(IBoard board);
-        void RemoveFromBoard(IBoard board);
+        void AddToBoard(IBoardForPlay board);
+        void RemoveFromBoard(IBoardForPlay board);
 
         IResourceList Cost { get; }
     }
@@ -55,7 +55,7 @@
     /// <summary>
     /// Piece producing resource(s) after a dice roll has been cast
     /// </summary>
-    public interface IProducer
+    public interface IProducer : IGameItem
     {
         IPlayer Player { get; }
         IResourceList Produce(IHex hex);
@@ -65,7 +65,7 @@
     /// <summary>
     /// Piece associated with a Vertex on the board
     /// </summary>
-    public interface IVertexPiece
+    public interface IVertexPiece : IGameItem
     {
         Vertex Vertex { get; }
     }
@@ -73,7 +73,7 @@
     /// <summary>
     /// Piece residing on the edge
     /// </summary>
-    public interface IEdgePiece
+    public interface IEdgePiece : IGameItem
     {
         Edge Edge { get; }
         
@@ -86,7 +86,7 @@
     /// <summary>
     /// Any piece casting victorypoints for the player
     /// </summary>
-    public interface IVictoryPoint
+    public interface IVictoryPoint : IGameItem
     {
         int VictoryPoints { get; }
     }

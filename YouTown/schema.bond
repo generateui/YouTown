@@ -1,5 +1,8 @@
 ﻿namespace YouTown;
 
+using DateTime = int64;
+using Guid = blob;
+
 struct LocationData
 {
 	0: int32 X;
@@ -22,6 +25,7 @@ struct VertexData
 
 enum ResourceTypeData
 {
+	Unknown,
 	Timber,
 	Wheat,
 	Sheep,
@@ -38,6 +42,7 @@ struct ResourceData
 
 enum ChitTypeData 
 {
+	Unknown,
 	Chit2,
 	Chit3,
 	Chit4,
@@ -59,6 +64,7 @@ struct ChitData
 
 enum PortTypeData
 {
+	Unknown,
 	FourToOne,
 	ThreeToOne,
 	Timber,
@@ -79,6 +85,7 @@ struct PortData
 
 enum HexTypeData
 {
+	Unknown,
 	Forest,
 	Field,
 	Pasture,
@@ -100,6 +107,7 @@ struct HexData
 
 enum PieceTypeData 
 {
+	Unknown,
 	Road,
 	Town,
 	City,
@@ -111,9 +119,20 @@ struct PieceData
 	0: int32 Id;
 	1: PieceTypeData PieceType = Road;
 	2: nullable<int32> PlayerId;
-	3: nullable<VertexData> Vertex;
-	4: nullable<EdgeData> Edge;
 }
+struct RoadData : PieceData
+{
+	0: nullable<EdgeData> Edge;
+}
+struct TownData : PieceData
+{
+	0: nullable<VertexData> Vertex;
+}
+struct CityData : PieceData
+{
+	0: nullable<VertexData> Vertex;
+}
+struct RoadBuildingTokenData : PieceData { }
 
 enum DevelopmentCardTypeData
 {
@@ -148,13 +167,350 @@ struct MonopolyData : DevelopmentCardData
 	0: string PickedResourceType;
 }
 
-struct RoadBuildingTokenData
-{
-	0: int32 Id;
-	1: int32 PlayerId;
-}
-
 struct RoadBuildingData : DevelopmentCardData
 {
 	0: vector<RoadBuildingTokenData> Tokens;
+}
+
+struct RobberData
+{
+	0: int32 Id;
+	1: nullable<LocationData> Location;
+}
+struct LargestArmyData
+{
+	0: int32 Id;
+	1: nullable<int32> PlayerId;
+}
+
+enum TradeOfferResponseTypeData 
+{
+	Unknown,
+	Accept,
+	Reject,
+	Counter,
+}
+struct TradeOfferResponseData
+{
+	0: int32 Id;
+	2: TradeOfferResponseTypeData TradeOfferResponseType = Unknown;
+	3: int32 PlayerId;
+	4: nullable<vector<ResourceData>> CounterOffered;
+	5: nullable<vector<ResourceData>> CounterRequested;
+}
+struct TradeOfferData
+{
+	0: int32 Id;
+	2: int32 PlayerId;
+	3: vector<ResourceData> Offered;
+	4: vector<ResourceData> Requested;
+	5: vector<TradeOfferResponseData> Responses;
+}
+
+enum GamePhaseTypeData
+{
+	Unknown,
+	Setup,
+	DetermineFirstPlayer,
+	InitialPlacement,
+	Turns,
+	End
+}
+struct GamePhaseData
+{
+	0: int32 Id;
+	1: GamePhaseTypeData GamePhaseType = Unknown;
+}
+
+struct SetupData : GamePhaseData { }
+struct DetermineFirstPlayerData : GamePhaseData { }
+struct PlaceTurnData 
+{
+	0: int32 Id;
+	1: int32 Number;
+	2: int32 PlayerId;
+}
+struct PlaceInitialPiecesData : GamePhaseData 
+{
+	0: vector<PlaceTurnData> Turns;
+	1: int32 RoadsBuiltCount;
+	2: nullable<int32> PlayerOnTurnId;
+}
+enum TurnPhaseTypeData
+{
+	Unknown,
+	BeforeDiceRoll,
+	RollDice,
+	Trading,
+	Building,
+}
+struct TurnPhaseData
+{
+	0: int32 Id;
+	1: TurnPhaseTypeData TurnPhaseType = Unknown;
+}
+struct BeforeDiceRollData : TurnPhaseData { }
+struct DiceRollTurnPhaseData : TurnPhaseData { }
+struct TradingData : TurnPhaseData { }
+struct BuildingData : TurnPhaseData { }
+struct PlayTurnsTurnData
+{
+	0: int32 Id;
+	1: int32 Number;
+	2: int32 PlayerId;
+	3: bool HasPlayedDevelopmentCard;
+	4: nullable<vector<TradeOfferData>> TradeOffers;
+}
+struct PlayTurnsData : GamePhaseData
+{
+	0: BeforeDiceRollData BeforeDiceRoll;
+	1: DiceRollTurnPhaseData DiceRoll;
+	2: TradingData Trading;
+	3: BuildingData Building;
+	4: vector<PlayTurnsTurnData> Turns;
+	5: nullable<int32> TurnId;
+	6: nullable<int32> TurnPhaseId;
+}
+struct EndOfGameData : GamePhaseData { }
+struct BoardDesignData
+{
+	0: Guid Guid;
+	1: string Name;
+	2: vector<HexData> Hexes;
+}
+struct BoardForPlayData
+{
+	0: vector<HexData> Hexes;
+	1: RobberData Robber;
+	2: vector<int32> PieceIds;
+	3: vector<int32> ProducerIds;
+	4: vector<int32> RoadIds;
+	5: vector<int32> TownIds;
+	6: vector<int32> CityIds;
+	7: vector<int32> VertexPieceIds;
+	8: vector<int32> EdgePieceIds;
+}
+struct UserData
+{
+	0: int32 Id;
+	1: string Color;
+	2: string Name;
+}
+struct PlayerData
+{
+	0: int32 Id;
+	1: int32 UserId;
+	2: string Color;
+	3: bool IsOnTurn;
+	4: vector<bonded<PieceData>> StockPieces;
+	5: vector<bonded<PieceData>> Pieces;
+	6: vector<bonded<DevelopmentCardData>> DevelopmentCards;
+	7: vector<bonded<DevelopmentCardData>> PlayedDevelopmentCards;
+	8: vector<ResourceData> Hand;
+	9: vector<int32> ProducerIds;
+	10: vector<int32> EdgePieceIds;
+	11: vector<int32> VertexPieceIds;
+	12: vector<int32> PortIds;
+	13: vector<int32> VictoryPointIds;
+	14: vector<int32> SoldierIds;
+}
+struct PlayOptionsData
+{
+	0: int32 VictoryPointsToWin;
+}
+struct SetupOptionsData
+{
+	0: string Name;
+	1: BoardDesignData BoardDesign;
+	2: int32 RoadCount;
+	3: int32 TownCount;
+	4: int32 CityCount;
+	5: vector<PortData> Ports;
+	6: vector<HexData> Hexes;
+	7: vector<ChitData> Chits;
+	8: map<string, int32> ResourceCountByType;
+	9: map<string, int32> DevelopmnetCardCountByType;
+}
+struct ChatData
+{
+	0: int32 UserId;
+	1: int32 PlayerId;
+	2: string Text;
+	3: DateTime DateTime;
+}
+struct BankData
+{
+	0: vector<ResourceData> Resources;
+	1: vector<bonded<DevelopmentCardData>> DevelopmentCards;
+}
+struct DiceRollData
+{
+	0: int32 Die1;
+	1: int32 Die2;
+}
+
+
+struct ProduceData
+{
+	0: int32 ProducerId;
+	1: int32 HexId;
+	2: vector<ResourceData> Resources;
+}
+struct ProductionShortageData
+{
+	0: int32 PlayerId;
+	1: string ResourceType;
+	2: int32 AmountShort;
+}
+struct ProductionData
+{
+	0: map<int32, vector<ResourceData>> ToDistribute;
+	1: vector<ProduceData> All;
+	2: vector<ProductionShortageData> Shortages;
+}
+
+enum GameActionTypeData
+{
+	Unknown,
+	AcceptTradeOffer,
+	BuildCity,
+	BuildRoad,
+	BuildTown,
+	BuyDevelopmentCard,
+	ClaimVictory,
+	CounterTradeOffer,
+	EndTurn,
+	LooseCards,
+	MoveRobber,
+	OfferTrade,
+	PlayDevelopmentCard,
+	RejectTradeOffer,
+	RobPlayer,
+	RollDice,
+	SaySomething,
+	StartGame,
+	TradeWithBank,
+	TradeWithPlayer,
+}
+
+struct GameActionData
+{
+	0: int32 Id;
+	1: GameActionTypeData GameActionType = Unknown;
+	2: int32 PlayerId;
+	3: int32 UserId;
+	4: nullable<int32> TurnPhaseId;
+	5: nullable<int32> GamePhaseId;
+	6: nullable<int32> TurnId;
+}
+enum QueuedItemGroupTypeData
+{
+	Unknown,
+	Single,
+	Ordered,
+	Unordered,
+}
+struct QueuedItemGroupData
+{
+	0: QueuedItemGroupTypeData QueuedItemGroupType = Unknown;
+	1: vector<bonded<GameActionData>> Actions;
+}
+struct GameData
+{
+	0: vector<UserData> Users;
+	1: vector<PlayerData> Players;
+	2: PlayOptionsData PlayOptions;
+	3: SetupOptionsData SetupOptions;
+	4: vector<ChatData> Chats;
+	5: vector<QueuedItemGroupData> Queue;
+	6: vector<bonded<GameActionData>> Actions;
+	7: BoardForPlayData Board;
+	8: BankData Bank;
+	9: LargestArmyData LargestArmy;
+	10: int32 GamePhaseId;
+	11: DetermineFirstPlayerData DetermineFirstPlayer;
+	12: SetupData Setup;
+	13: PlaceInitialPiecesData PlaceInitialPieces;
+	14: PlayTurnsData PlayTurns;
+	15: EndOfGameData EndOfGame;
+}
+struct AcceptTradeOfferData : GameActionData
+{
+	0: nullable<int32> TradeOfferId;
+}
+struct BuildCityData : GameActionData
+{
+	0: nullable<VertexData> Vertex;
+}
+struct BuildRoadData : GameActionData
+{
+	0: nullable<EdgeData> Edge;
+}
+struct BuildTownData : GameActionData
+{
+	0: nullable<VertexData> Vertex;
+}
+struct BuyDevelopmentCardData : GameActionData
+{
+	0: nullable<bonded<DevelopmentCardData>> DevelopmentCard;
+}
+struct ClaimVictoryData : GameActionData { }
+struct CounterOfferTradeData : GameActionData
+{
+	0: nullable<int32> TradeOfferId;
+	1: nullable<vector<ResourceData>> CounterOffered;
+	2: nullable<vector<ResourceData>> CounterRequested;
+}
+struct EndTurnData : GameActionData { }
+struct LooseCardsData : GameActionData
+{
+	0: nullable<vector<ResourceData>> ResourcesToLoose;
+}
+struct MoveRobberData : GameActionData
+{
+	0: nullable<LocationData> Location;
+}
+struct OfferTradeData : GameActionData
+{
+	0: nullable<vector<ResourceData>> Offered;
+	1: nullable<vector<ResourceData>> Requested;
+}
+struct PlayDevelopmentCardData : GameActionData
+{
+	0: nullable<bonded<DevelopmentCardData>> DevelopmentCard;
+}
+struct RejectTradeOfferData : GameActionData
+{
+	0: nullable<int32> TradeOfferId;
+}
+struct RobPlayerData : GameActionData
+{
+	0: nullable<int32> OpponentId;
+	1: nullable<ResourceData> Resource;
+}
+struct RollDiceData : GameActionData
+{
+	0: nullable<DiceRollData> RolledDice;
+	1: nullable<ProductionData> Production;
+}
+struct SaySomethingData : GameActionData
+{
+	0: string Text;
+}
+struct StartGameData : GameActionData
+{
+	0: nullable<GameData> Game;
+}
+struct TradeWithBankData : GameActionData
+{
+	0: nullable<vector<ResourceData>> Offered;
+	1: nullable<vector<ResourceData>> Requested;
+}
+struct TradeWithPlayerData : GameActionData
+{
+	0: nullable<int32> OpponentId;
+	1: nullable<vector<ResourceData>> Offered;
+	2: nullable<vector<ResourceData>> Requested;
+	3: nullable<int32> TradeOfferId;
+	4: nullable<int32> AcceptId;
 }

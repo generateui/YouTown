@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace YouTown
 {
@@ -10,6 +11,15 @@ namespace YouTown
     {
         private readonly string _resourceType;
         private readonly Func<int, IResource> _factory;
+        private static Dictionary<string, ResourceType> _knownTypes = new Dictionary<string, ResourceType>
+        {
+            {Timber.TimberType.Value, Timber.TimberType },
+            {Wheat.WheatType.Value, Wheat.WheatType },
+            {Sheep.SheepType.Value, Sheep.SheepType },
+            {Clay.ClayType.Value, Clay.ClayType },
+            {Ore.OreType.Value, Ore.OreType },
+            {DummyResource.DummyResourceType.Value, DummyResource.DummyResourceType },
+        };
 
         public ResourceType(string resourceType, Color color, Func<int, IResource> factory)
         {
@@ -22,6 +32,15 @@ namespace YouTown
         public string Value => _resourceType;
 
         public IResource Create(int id) => _factory(id);
+
+        public static ResourceType Parse(string resourceTypeString)
+        {
+            if (_knownTypes.ContainsKey(resourceTypeString))
+            {
+                return _knownTypes[resourceTypeString];
+            }
+            throw new ArgumentException($"unknown {nameof(ResourceType)}");
+        }
 
         private bool Equals(ResourceType other)
         {

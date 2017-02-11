@@ -2,10 +2,10 @@
 
 namespace YouTown.Validation
 {
-    public class CanBuildTownAt : ValidatorBase<Vertex, IBoard>
+    public class CanBuildTownAt : ValidatorBase<Vertex, IBoardForPlay>
     {
         // In the future, this check should probably be made more specific e.g. to towns and cities
-        public override IValidationResult Validate(Vertex vertex, IBoard board, string text = null)
+        public override IValidationResult Validate(Vertex vertex, IBoardForPlay board, string text = null)
         {
             bool vertexIsTaken = board.PiecesByVertex.ContainsKey(vertex);
             bool neighboringVerticesAreTaken = vertex.Neighbors

@@ -51,7 +51,7 @@ namespace YouTown.UnitTest.GameActions
             playerMock.Setup(p => p.Pieces).Returns(playerPieces);
             playerMock.Setup(p => p.EdgePieces).Returns(new Dictionary<Edge, IList<IEdgePiece>>());
 
-            var boardMock = new Mock<IBoard>();
+            var boardMock = new Mock<IBoardForPlay>();
 
             var hexesByLocation = new Dictionary<Location, IHex>
             {

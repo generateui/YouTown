@@ -36,18 +36,16 @@ namespace YouTown
             }
         }
 
-        /// <inheritdoc />
         public int Id { get; }
-
         public Location WaterLocation { get; }
         public Location LandLocation { get; }
-        public virtual ResourceType ResourceType { get; }
+        public virtual ResourceType ResourceType => null;
         public Edge Edge { get; }
         public virtual int InAmount { get; }
         public virtual int OutAmount { get; }
-        public virtual bool IsRandom { get; }
+        public virtual bool IsRandom => false;
         public virtual Color Color { get; }
-        public virtual bool HasResource { get; }
+        public virtual bool HasResource => false;
 
         public int Divide(IResourceList resources, ResourceType resourceType)
         {
@@ -109,7 +107,7 @@ namespace YouTown
         public RandomPort(int id, Location waterLocation, Location landLocation)
             : base(id, waterLocation, landLocation) { }
         public override Color Color => Color.Black;
-
+        public override bool IsRandom => true;
     }
 
     public class FourToOnePort : PortBase

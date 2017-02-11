@@ -8,33 +8,42 @@ namespace YouTown.GameAction
     /// </summary>
     /// This action is originated from an opponent, not the player on turn. Thus,
     /// the <seealso cref="Player"/> is the opponent. 
-    public class CounterOfferTrade : IGameAction
+    public class CounterOfferTrade : GameActionBase, IGameAction
     {
         public static ActionType CounterOfferTradeType = new ActionType("CounterOfferTrade");
-        public CounterOfferTrade(int id, IPlayer player, TradeOffer tradeOffer, IResourceList counterOffered, IResourceList counterRequested)
+
+        public CounterOfferTrade(int id, IPlayer player, TradeOffer tradeOffer, IResourceList counterOffered, IResourceList counterRequested) : base(id, player)
         {
-            Id = id;
-            Player = player;
             CounterOffered = counterOffered;
             CounterRequested = counterRequested;
             TradeOffer = tradeOffer;
         }
+        public CounterOfferTrade(CounterOfferTradeData data, IRepository repo) : base(data, repo)
+        {
+            TradeOffer = repo.GetOrNull<TradeOffer>(data.TradeOfferId);
+            CounterOffered = data.CounterOffered?.FromData();
+            CounterRequested = data.CounterRequested.FromData();
+        }
 
-        public int Id { get; }
-        public ActionType ActionType => CounterOfferTradeType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => CounterOfferTradeType;
         public TradeOffer TradeOffer { get; }
         public IResourceList CounterOffered { get; }
         public IResourceList CounterRequested { get; }
-        public bool IsAllowedInOpponentTurn => true;
+        public override bool IsAllowedInOpponentTurn => true;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new CounterOfferTradeData
+            {
+                GameActionType = GameActionTypeData.CounterTradeOffer,
+                TradeOfferId = TradeOffer?.Id,
+                CounterOffered = CounterOffered?.ToData(),
+                CounterRequested = CounterRequested?.ToData()
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(TradeOffer)
                 .WithObject<NotNull>(CounterOffered)
@@ -46,18 +55,14 @@ namespace YouTown.GameAction
                 .With<NotRespondedYet, IPlayer, TradeOffer>(Player, TradeOffer)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void Perform(IGame game)
         {
-        }
-
-        public void Perform(IGame game)
-        {
-            var counter = new CounterOffer(Player, CounterOffered, CounterRequested);
+            var id = game.Identifier.NewId();
+            var counter = new CounterOffer(id, Player, CounterOffered, CounterRequested);
+            game.Repository.Add(counter);
             TradeOffer.Responses.Add(counter);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

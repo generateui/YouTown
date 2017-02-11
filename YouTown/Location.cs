@@ -26,9 +26,23 @@ namespace YouTown
             Z = z;
         }
 
+        public Location(LocationData data)
+        {
+            X = data.X;
+            Y = data.Y;
+            Z = data.Z;
+        }
+
         public int X { get; }
         public int Y { get; }
         public int Z { get; }
+
+        public LocationData ToData() => new LocationData
+        {
+            X = X,
+            Y = Y,
+            Z = Z
+        };
 
         public IList<Location> Neighbors
         {

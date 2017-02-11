@@ -47,14 +47,14 @@ namespace YouTown
             player.EdgePieces[Edge].Remove(this);
         }
 
-        public void AddToBoard(IBoard board)
+        public void AddToBoard(IBoardForPlay board)
         {
             board.RoadsByEdge[Edge] = this;
             board.PiecesByEdge[Edge] = this;
             board.Pieces.Add(this);
         }
 
-        public void RemoveFromBoard(IBoard board)
+        public void RemoveFromBoard(IBoardForPlay board)
         {
             board.RoadsByEdge.Remove(Edge);
             board.PiecesByEdge.Remove(Edge);

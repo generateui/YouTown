@@ -1,8 +1,8 @@
 namespace YouTown.Validation
 {
-    public class HasHexAt : ValidatorBase<IBoard, Location>
+    public class HasHexAt : ValidatorBase<IBoardForPlay, Location>
     {
-        public override IValidationResult Validate(IBoard board, Location location, string text = null)
+        public override IValidationResult Validate(IBoardForPlay board, Location location, string text = null)
         {
             if (!board.HexesByLocation.ContainsKey(location))
             {

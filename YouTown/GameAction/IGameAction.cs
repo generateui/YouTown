@@ -50,5 +50,6 @@ namespace YouTown.GameAction
         IValidationResult Validate(IGame game);
         void PerformAtServer(IServerGame serverGame);
         void Perform(IGame game);
+        GameActionData ToData();
     }
 }

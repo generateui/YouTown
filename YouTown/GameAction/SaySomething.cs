@@ -3,42 +3,41 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class SaySomething : IGameAction
+    public class SaySomething : GameActionBase, IGameAction
     {
         public static ActionType SaySomethingType = new ActionType("SaySomething");
-        public SaySomething(int id, IPlayer player, string what)
+
+        public SaySomething(int id, IPlayer player, string what) : base(id, player)
         {
-            Id = id;
-            Player = player;
             What = what;
         }
-
-        public int Id { get; }
-        public ActionType ActionType => SaySomethingType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public string What { get; }
-        public bool IsAllowedInOpponentTurn => true;
-
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => true;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => true;
-
-        public IValidationResult Validate(IGame game) => Validator.Valid;
-
-        public void PerformAtServer(IServerGame serverGame)
+        public SaySomething(SaySomethingData data, IRepository repo) : base(data, repo)
         {
+            What = data.Text;
         }
 
-        public void Perform(IGame game)
+        public override ActionType ActionType => SaySomethingType;
+        public string What { get; }
+        public override bool IsAllowedInOpponentTurn => true;
+
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => true;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => true;
+
+        public override GameActionData ToData() =>
+            base.ToData(new SaySomethingData
+            {
+                GameActionType = GameActionTypeData.SaySomething,
+                Text = What,
+            });
+
+        public override IValidationResult Validate(IGame game) => Validator.Valid;
+
+        public override void Perform(IGame game)
         {
             var chat = new Chat(Player, Player.User, What, DateTime.Now);
             game.Chats.Add(chat);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

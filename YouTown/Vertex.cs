@@ -16,9 +16,24 @@ namespace YouTown
             Location3 = location3;
         }
 
+        public Vertex(VertexData data)
+        {
+            Location1 = new Location(data.Location1);
+            Location2 = new Location(data.Location2);
+            Location3 = new Location(data.Location3);
+        }
+
         public Location Location1 { get; }
         public Location Location2 { get; }
         public Location Location3 { get; }
+
+        public VertexData ToData() =>
+            new VertexData
+            {
+                Location1 = Location1.ToData(),
+                Location2 = Location2.ToData(),
+                Location3 = Location3.ToData(),
+            };
 
         public IList<Edge> Edges
         {

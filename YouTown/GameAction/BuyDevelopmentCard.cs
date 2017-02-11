@@ -1,47 +1,50 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Bond;
 using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class BuyDevelopmentCard : IGameAction, IObscurable
+    public class BuyDevelopmentCard : GameActionBase, IObscurable
     {
         public static ActionType BuyDevelopmentCardType = new ActionType("BuyDevelopmentCard");
-        public BuyDevelopmentCard(int id, IPlayer player)
+
+        public BuyDevelopmentCard(int id, IPlayer player) : base(id, player) { }
+
+        public BuyDevelopmentCard(BuyDevelopmentCardData data, IRepository repo) : base(data, repo)
         {
-            Id = id;
-            Player = player;
+            DevelopmentCard = data.DevelopmentCard?.FromData(repo);
         }
 
-        public int Id { get; }
-        public ActionType ActionType => BuyDevelopmentCardType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
+        public override ActionType ActionType => BuyDevelopmentCardType;
         public bool IsAtServer { get; }
         public IPlayer PlayerAtClient { get; }
         public IDevelopmentCard DevelopmentCard { get; set; }
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new BuyDevelopmentCardData
+            {
+                GameActionType = GameActionTypeData.BuyDevelopmentCard,
+                DevelopmentCard = DevelopmentCard != null ? new Bonded<DevelopmentCardData>(DevelopmentCard.ToData()) : null,
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .With<IsOnTurn, IPlayer>(Player)
                 .WithObject<NotEmpty>(game.Bank.DevelopmentCards, "bank development cards")
                 .With<CanPayPiece, IPlayer, IPiece>(Player, DevelopmentCard)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void PerformAtServer(IServerGame serverGame)
         {
             var developmentcard = serverGame.DevelopmentCards.Last();
             serverGame.DevelopmentCards.Remove(developmentcard);
             serverGame.DevelopmentCardsByPlayer[Player].Add(developmentcard);
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             var developmentCard = game.Bank.DevelopmentCards.Last();
             game.Bank.DevelopmentCards.Remove(developmentCard);
@@ -50,9 +53,7 @@ namespace YouTown.GameAction
             Player.LooseResourcesTo(game.Bank.Resources, cost, this);
             developmentCard.TurnBought = game.PlayTurns.Turn;
 
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
-            TurnPhase = game.PlayTurns.TurnPhase;
+            base.Perform(game);
         }
 
     }

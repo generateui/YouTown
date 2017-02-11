@@ -3,43 +3,43 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class BuildTown : IGameAction
+    public class BuildTown : GameActionBase
     {
         public static ActionType BuildTownType = new ActionType("BuildTown");
-        public BuildTown(int id, IPlayer player, Vertex vertex)
+        public BuildTown(int id, IPlayer player, Vertex vertex) : base (id, player)
         {
-            Id = id;
-            Player = player;
             Vertex = vertex;
         }
 
-        public int Id { get; }
-        public ActionType ActionType => BuildTownType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
+        public BuildTown(BuildTownData data, IRepository repo) : base(data, repo)
+        {
+            Vertex = data.Vertex != null ? new Vertex(data.Vertex) : null;
+        }
+
+        public override ActionType ActionType => BuildTownType;
         public Vertex Vertex { get; }
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns || gp.IsInitialPlacement;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBuilding;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns || gp.IsInitialPlacement;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new BuildTownData
+            {
+                GameActionType = GameActionTypeData.BuildTown,
+                Vertex = Vertex?.ToData()
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(Vertex)
                 .With<HasTownInStock, IPlayer>(Player)
 //                .With<TownAllowedWhenInitialPlacement>(game.GamePhase) TODO: implement
                 .With<IsOnTurn, IPlayer>(Player)
-                .With<CanBuildTownAt, Vertex, IBoard>(Vertex, game.Board)
+                .With<CanBuildTownAt, Vertex, IBoardForPlay>(Vertex, game.Board)
                 .With<HasRoadToVertex, Vertex, IPlayer>(Vertex, Player)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
-        {
-        }
-
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             var town = Player.Stock[Town.TownType].Last() as Town;
             game.GamePhase.BuildTown(game, Player, town);
@@ -54,9 +54,7 @@ namespace YouTown.GameAction
                 Player.Ports.Add(matchingHexWithPort.Port);
             }
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

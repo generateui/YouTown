@@ -3,53 +3,54 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class TradeWithBank : IGameAction
+    public class TradeWithBank : GameActionBase
     {
         public static ActionType TradeWithBankType = new ActionType("TradeWithBank");
-        public TradeWithBank(int id, IPlayer player, IResourceList offeredToBank, IResourceList requestedFromBank)
+        public TradeWithBank(int id, IPlayer player, IResourceList offered, IResourceList requested) : base(id, player)
         {
-            Id = id;
-            Player = player;
-            OfferedToBank = offeredToBank;
-            RequestedFromBank = requestedFromBank;
+            Offered = offered;
+            Requested = requested;
         }
 
-        public int Id { get; }
-        public ActionType ActionType => TradeWithBankType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public IResourceList OfferedToBank { get; }
-        public IResourceList RequestedFromBank { get; }
-        public bool IsAllowedInOpponentTurn => false;
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+        public TradeWithBank(TradeWithBankData data, IRepository repo) : base(data, repo)
+        {
+            Offered = data.Offered?.FromData();
+            Requested = data.Requested?.FromData();
+        }
 
-        public IValidationResult Validate(IGame game) =>
+        public override ActionType ActionType => TradeWithBankType;
+        public IResourceList Offered { get; }
+        public IResourceList Requested { get; }
+
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+
+        public override GameActionData ToData() =>
+            ToData(new TradeWithBankData
+            {
+                GameActionType = GameActionTypeData.TradeWithBank,
+                Offered = Offered?.ToData(),
+                Requested = Requested?.ToData(),
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
-                .WithObject<NotNull>(OfferedToBank)
-                .WithObject<NotEmpty>(OfferedToBank)
-                .WithObject<NotNull>(RequestedFromBank)
-                .WithObject<NotEmpty>(RequestedFromBank)
-                .With<HasResources, IResourceList, IResourceList>(Player.Hand, OfferedToBank, Player.User.Name)
-                .With<HasResources, IResourceList, IResourceList>(game.Bank.Resources, RequestedFromBank, "bank")
+                .WithObject<NotNull>(Offered)
+                .WithObject<NotEmpty>(Offered)
+                .WithObject<NotNull>(Requested)
+                .WithObject<NotEmpty>(Requested)
+                .With<HasResources, IResourceList, IResourceList>(Player.Hand, Offered, Player.User.Name)
+                .With<HasResources, IResourceList, IResourceList>(game.Bank.Resources, Requested, "bank")
                 .With<IsCorrectBankTrade, Tuple<IPortList, IResourceList, IResourceList>>(
-                    Tuple.Create(Player.Ports, OfferedToBank, RequestedFromBank))
+                    Tuple.Create(Player.Ports, Offered, Requested))
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void Perform(IGame game)
         {
-        }
+            Player.LooseResourcesTo(game.Bank.Resources, Offered, null);
+            Player.GainResourcesFrom(game.Bank.Resources, Requested, null);
 
-        public void Perform(IGame game)
-        {
-            Player.LooseResourcesTo(game.Bank.Resources, OfferedToBank, null);
-            Player.GainResourcesFrom(game.Bank.Resources, RequestedFromBank, null);
-
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

@@ -1,30 +1,35 @@
-﻿using YouTown.Validation;
+﻿using Bond;
+using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class PlayDevelopmentCard : IGameAction
+    public class PlayDevelopmentCard : GameActionBase
     {
         public static ActionType PlayDevelopmentCardType = new ActionType("PlayDevelopmentCard");
-        public PlayDevelopmentCard(int id, IPlayer player, IDevelopmentCard developmentCard)
+
+        public PlayDevelopmentCard(int id, IPlayer player, IDevelopmentCard developmentCard) : base(id, player)
         {
-            Id = id;
-            Player = player;
             DevelopmentCard = developmentCard;
         }
+        public PlayDevelopmentCard(PlayDevelopmentCardData data, IRepository repo) : base(data, repo)
+        {
+            DevelopmentCard = data.DevelopmentCard?.FromData(repo);
+        }
 
-        public int Id { get; }
-        public ActionType ActionType => PlayDevelopmentCardType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => PlayDevelopmentCardType;
         public IDevelopmentCard DevelopmentCard { get;  }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsDiceRoll || tp.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsDiceRoll || tp.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
+        public override GameActionData ToData() =>
+            base.ToData(new PlayDevelopmentCardData
+            {
+                GameActionType = GameActionTypeData.PlayDevelopmentCard,
+                DevelopmentCard = DevelopmentCard != null ? new Bonded<DevelopmentCardData>(DevelopmentCard.ToData()) : null,
+            });
+
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(DevelopmentCard)
                 .With<IsOnTurn, IPlayer>(Player)
@@ -32,12 +37,12 @@ namespace YouTown.GameAction
                 .With<NotYetPlayedDevelopmentCard, IPlayTurnsTurn, IDevelopmentCard>(game.PlayTurns.Turn, DevelopmentCard)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void PerformAtServer(IServerGame serverGame)
         {
             serverGame.DevelopmentCardsByPlayer[Player].Remove(DevelopmentCard);
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             var turn = game.PlayTurns.Turn;
             DevelopmentCard.Play(game);
@@ -49,9 +54,7 @@ namespace YouTown.GameAction
                 turn.HasPlayedDevelopmentCard = true;
             }
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = turn;
+            base.Perform(game);
         }
     }
 }

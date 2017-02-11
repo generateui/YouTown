@@ -2,47 +2,50 @@
 
 namespace YouTown.GameAction
 {
-    public class AcceptTradeOffer : IGameAction
+    public class AcceptTradeOffer : GameActionBase, IGameAction
     {
         public static ActionType AcceptTradeOfferType = new ActionType("AcceptTradeOffer");
 
-        public AcceptTradeOffer(int id, IPlayer player, TradeOffer tradeOffer)
+        public AcceptTradeOffer(int id, IPlayer player, TradeOffer tradeOffer) : base (id, player)
         {
-            Id = id;
-            Player = player;
             TradeOffer = tradeOffer;
         }
 
-        public int Id { get; }
-        public ActionType ActionType => AcceptTradeOfferType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public AcceptTradeOffer(AcceptTradeOfferData data, IRepository repo) : base(data, repo)
+        {
+            TradeOffer = repo.GetOrNull<TradeOffer>(data.TradeOfferId);
+        }
+
+        public override ActionType ActionType => AcceptTradeOfferType;
         public TradeOffer TradeOffer { get; }
-        public bool IsAllowedInOpponentTurn => true;
+        public override bool IsAllowedInOpponentTurn => true;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
 
-        public IValidationResult Validate(IGame game) =>
-            new ValidateAll()
+        public override GameActionData ToData()
+        {
+            var data = new AcceptTradeOfferData
+            {
+                GameActionType = GameActionTypeData.AcceptTradeOffer,
+                TradeOfferId = TradeOffer?.Id
+            };
+            return base.ToData(data);
+        }
+
+        public override IValidationResult Validate(IGame game) =>
+            BaseValidate(game)
                 .WithObject<NotNull>(TradeOffer)
                 .With<NotRespondedYet, IPlayer, TradeOffer>(Player, TradeOffer)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void Perform(IGame game)
         {
-        }
-
-        public void Perform(IGame game)
-        {
-            var accept = new Accept(Player);
+            var accept = new Accept(game.Identifier.NewId(), Player);
+            game.Repository.Add(accept);
             TradeOffer.Responses.Add(accept);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
-}
+    }
 }

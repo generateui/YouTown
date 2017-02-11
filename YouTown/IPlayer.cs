@@ -1,15 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace YouTown
 {
     public sealed class PlayerColor
     {
-        private string _color;
+        public static readonly PlayerColor White = new PlayerColor("White");
+        public static readonly PlayerColor Green = new PlayerColor("Green");
+        public static readonly PlayerColor Red = new PlayerColor("Red");
+        public static readonly PlayerColor Blue = new PlayerColor("Blue");
+        public static readonly PlayerColor Orange = new PlayerColor("Orange");
+        public static readonly PlayerColor Brown = new PlayerColor("Brown");
+        public static readonly IReadOnlyList<PlayerColor> AllColors = new List<PlayerColor>
+        {
+            White, Green, Red, Blue, Orange, Brown
+        };
+        private readonly string _color;
 
         private PlayerColor(string color)
         {
             _color = color;
+        }
+
+        public string Value => _color;
+
+        public static PlayerColor Parse(string playerColorString)
+        {
+            var parsed = AllColors.FirstOrDefault(pc => pc.Value == playerColorString);
+            if (parsed != null)
+            {
+                return parsed;
+            }
+            var colorStrings = AllColors.Select(pc => pc.Value);
+            var commaSeparatedColorStrings = string.Join(",", colorStrings);
+            throw new ArgumentException($"Got: [{playerColorString}. Expected one of: [{commaSeparatedColorStrings}]");
         }
 
         private bool Equals(PlayerColor other)
@@ -52,7 +77,7 @@ namespace YouTown
         IList<IDevelopmentCard> DevelopmentCards { get; }
         IList<IDevelopmentCard> PlayedDevelopmentCards { get; }
         IList<IVictoryPoint> VictoryPoints { get; }
-        IList<Soldier> Soldier { get; }
+        IList<Soldier> Soldiers { get; }
         IDictionary<PieceType, IList<IPiece>> Stock { get; }
 
         IDictionary<Edge, Road> Roads { get; }
@@ -65,11 +90,11 @@ namespace YouTown
 
     public class Player : IPlayer
     {
-        public Player(int id,IUser user)
+        public Player(int id, PlayerColor color, IUser user)
         {
             Id = id;
             User = user;
-            Color = user.Color;
+            Color = color;
         }
 
         public int Id { get; }
@@ -86,7 +111,7 @@ namespace YouTown
         public IList<IDevelopmentCard> DevelopmentCards { get; } = new List<IDevelopmentCard>();
         public IList<IDevelopmentCard> PlayedDevelopmentCards { get; } = new List<IDevelopmentCard>();
         public IList<IVictoryPoint> VictoryPoints { get; } = new List<IVictoryPoint>();
-        public IList<Soldier> Soldier { get; } = new List<Soldier>();
+        public IList<Soldier> Soldiers { get; } = new List<Soldier>();
         public IDictionary<PieceType, IList<IPiece>> Stock { get; } = new Dictionary<PieceType, IList<IPiece>>();
         public IDictionary<Edge, Road> Roads { get; } = new Dictionary<Edge, Road>();
         public IDictionary<Vertex, Town> Towns { get; } = new Dictionary<Vertex, Town>();

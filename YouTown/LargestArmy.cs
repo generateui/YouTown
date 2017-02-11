@@ -5,9 +5,15 @@ namespace YouTown
     public class LargestArmy : IPiece, IVictoryPoint
     {
         public static readonly PieceType LargestArmyType = new PieceType("largestarmy");
+
         public LargestArmy(int id = Identifier.DontCare)
         {
             Id = id;
+        }
+        public LargestArmy(LargestArmyData data, IRepository repo)
+        {
+            Id = data.Id;
+            Player = data.PlayerId.HasValue ? repo.Get<IPlayer>(data.PlayerId.Value) : null;
         }
 
         public int Id { get; }
@@ -16,6 +22,13 @@ namespace YouTown
         public bool AffectsRoad => false;
         public IResourceList Cost => ResourceList.Empty;
         public int VictoryPoints => 2;
+
+        public LargestArmyData ToData() =>
+            new LargestArmyData
+            {
+                Id = Id,
+                PlayerId = Player?.Id
+            };
 
         public void AddToPlayer(IPlayer player)
         {
@@ -29,12 +42,12 @@ namespace YouTown
             player.VictoryPoints.Remove(this);
         }
 
-        public void AddToBoard(IBoard board)
+        public void AddToBoard(IBoardForPlay board)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveFromBoard(IBoard board)
+        public void RemoveFromBoard(IBoardForPlay board)
         {
             throw new NotImplementedException();
         }

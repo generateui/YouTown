@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using YouTown.GameAction;
 
 namespace YouTown
 {
@@ -8,6 +9,16 @@ namespace YouTown
     {
         private readonly string _type;
         private readonly Func<int, IDevelopmentCard> _factory;
+        private static readonly Dictionary<string, DevelopmentCardType> _knownTypes = 
+            new Dictionary<string, DevelopmentCardType>
+            {
+                {Invention.InventionType._type, Invention.InventionType },
+                {Monopoly.MonopolyType._type, Monopoly.MonopolyType },
+                {RoadBuilding.RoadBuildingType._type, RoadBuilding.RoadBuildingType },
+                {VictoryPointCard.VictoryPointCardType._type, VictoryPointCard.VictoryPointCardType },
+                {Soldier.SoldierType._type, Soldier.SoldierType },
+                {DummyDevelopmentCard.VictoryPointCardType._type, DummyDevelopmentCard.VictoryPointCardType },
+            };
 
         public DevelopmentCardType(string type, Func<int, IDevelopmentCard> factory)
         {
@@ -15,7 +26,18 @@ namespace YouTown
             _factory = factory;
         }
 
+        public string Value => _type;
+
         public IDevelopmentCard Create(int id) => _factory(id);
+
+        public static DevelopmentCardType Parse(string developmentCardTypeString)
+        {
+            if (_knownTypes.ContainsKey(developmentCardTypeString))
+            {
+                return _knownTypes[developmentCardTypeString];
+            }
+            throw new ArgumentException($"unknown {nameof(DevelopmentCardType)}");
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
@@ -60,7 +82,7 @@ namespace YouTown
 
     public abstract class DevelopmentCardBase : IDevelopmentCard
     {
-        public static PieceType DevelopmentCardPieceType = new PieceType("developmentcard");
+        public static PieceType DevelopmentCardPieceType = new PieceType("DevelopmentCard");
         public int Id { get; protected set; }
         public DevelopmentCardType DevelopmentCardType { get; }
         public virtual bool MaxOnePerTurn { get; }
@@ -93,11 +115,11 @@ namespace YouTown
             player.DevelopmentCards.Remove(this);
         }
 
-        public void AddToBoard(IBoard board)
+        public void AddToBoard(IBoardForPlay board)
         {
         }
 
-        public void RemoveFromBoard(IBoard board)
+        public void RemoveFromBoard(IBoardForPlay board)
         {
         }
     }
@@ -148,7 +170,8 @@ namespace YouTown
         public override bool MoveToStockAfterPlay => true;
         public override void Play(IGame game)
         {
-            // TODO: implement
+            game.Queue.EnqueueSingle(new MoveRobber(Player));
+            game.Queue.EnqueueSingle(new RobPlayer(Player), optional: true);
         }
 
         public bool IsAtServer { get; }
@@ -226,7 +249,7 @@ namespace YouTown
         /// </summary>
         public class Token : IPiece
         {
-            public static readonly PieceType RoadBuildingTokenType = new PieceType("roadbuildingtoken");
+            public static readonly PieceType RoadBuildingTokenType = new PieceType("RoadBuildingToken");
             public Token(IPlayer player, int id)
             {
                 Id = id;
@@ -249,9 +272,9 @@ namespace YouTown
                 player.Pieces.Remove(this);
             }
 
-            public void AddToBoard(IBoard board) { }
+            public void AddToBoard(IBoardForPlay board) { }
 
-            public void RemoveFromBoard(IBoard board) { }
+            public void RemoveFromBoard(IBoardForPlay board) { }
         }
 
         public static DevelopmentCardType RoadBuildingType = new DevelopmentCardType("RoadBuilding", id => new RoadBuilding(id));
@@ -263,7 +286,7 @@ namespace YouTown
 
         public override bool MaxOnePerTurn => true;
         public override bool WaitOneTurnBeforePlay => true;
-        public IEnumerable<Token> Tokens { get; private set; }
+        public IEnumerable<Token> Tokens { get; set; }
 
         public override void PerformAtServer(IServerGame serverGame)
         {

@@ -1,24 +1,28 @@
-﻿using System;
-
-namespace YouTown
+﻿namespace YouTown
 {
-    public interface IUser
+    public interface IUser : IGameItem
     {
-        Guid Id { get; }
         string Name { get; } // TODO: introduce microtype
         PlayerColor Color { get; }
     }
 
     public class User : IUser
     {
-        public User(Guid id, string name, PlayerColor color)
+        public User(int id, string name, PlayerColor color)
         {
             Id = id;
             Name = name;
             Color = color;
         }
 
-        public Guid Id { get; }
+        public User(UserData data)
+        {
+            Id = data.Id;
+            Name = data.Name;
+            Color = PlayerColor.Parse(data.Color);
+        }
+
+        public int Id { get; }
         public string Name { get; }
         public PlayerColor Color { get; }
     }

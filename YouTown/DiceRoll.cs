@@ -8,9 +8,22 @@
             Die2 = die2;
         }
 
+        public DiceRoll(DiceRollData data)
+        {
+            Die1 = data.Die1;
+            Die2 = data.Die2;
+        }
+
         public int Die1 { get; }
         public int Die2 { get; }
         public int Sum => Die1 + Die2;
+
+        public DiceRollData ToData() =>
+            new DiceRollData
+            {
+                Die1 = Die1,
+                Die2 = Die2,
+            };
 
         protected bool Equals(DiceRoll other)
         {

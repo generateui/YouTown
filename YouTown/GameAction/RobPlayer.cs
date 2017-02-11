@@ -4,41 +4,44 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class RobPlayer : IGameAction
+    public class RobPlayer : GameActionBase
     {
         public static ActionType RobPlayerType = new ActionType("RobPlayer");
-        public RobPlayer(IPlayer player)
+
+        public RobPlayer(IPlayer player) : base(player) { }
+        public RobPlayer(int id, IPlayer player, IPlayer opponent, IResource resource) : base(id, player)
         {
-            Player = player;
-        }
-        public RobPlayer(int id, IPlayer player, IPlayer opponent, IResource resource)
-        {
-            Id = id;
-            Player = player;
             Opponent = opponent;
             Resource = resource;
         }
+        public RobPlayer(RobPlayerData data, IRepository repo) : base(data, repo)
+        {
+            Opponent = repo.GetOrNull<IPlayer>(data.OpponentId);
+            Resource = data.Resource?.FromData();
+        }
 
-        public int Id { get; }
-        public ActionType ActionType => RobPlayerType;
-        public IPlayer Player { get; }
+        public override ActionType ActionType => RobPlayerType;
         public IPlayer Opponent { get; }
         public IResource Resource { get; private set; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBeforeDiceRoll || tp.IsDiceRoll || tp.IsBuilding;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => tp.IsBeforeDiceRoll || tp.IsDiceRoll || tp.IsBuilding;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game)
+        public override GameActionData ToData() =>
+            base.ToData(new RobPlayerData
+            {
+                GameActionType = GameActionTypeData.RobPlayer,
+                OpponentId = Opponent?.Id,
+                Resource = Resource.ToData()
+            });
+
+        public override IValidationResult Validate(IGame game)
         {
             // TODO: conditionally validate
             throw new NotImplementedException();
         }
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void PerformAtServer(IServerGame serverGame)
         {
             if (Opponent == null)
             {
@@ -52,7 +55,7 @@ namespace YouTown.GameAction
             Resource = Opponent.Hand.PickRandom(random);
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             if (Resource != null)
             {
@@ -61,9 +64,7 @@ namespace YouTown.GameAction
                 Player.GainResourcesFrom(Opponent.Hand, resourceList, null);
             }
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

@@ -13,9 +13,22 @@
             Id = id;
         }
 
+        public Robber(RobberData data)
+        {
+            Id = data.Id;
+            Location = data.Location != null ? new Location(data.Location) : null;
+        }
+
         /// <inheritdoc />
         public int Id { get; }
 
         public Location Location { get; set; }
+
+        public RobberData ToData() =>
+            new RobberData
+            {
+                Id = Id,
+                Location = Location?.ToData()
+            };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Bond;
 using YouTown.GameAction;
 
 namespace YouTown
@@ -14,6 +15,25 @@ namespace YouTown
     /// <see cref="RobPlayer"/> action.
     /// Similarly, the <see cref="PlaceInitialPieces"/> game phase enqueues actions
     /// at start of the phase where every player is expected to perform an action.
+    /// Use cases:
+    /// - <see cref="PlayDevelopmentCard"/> with <see cref="Soldier"/> enqueues a
+    ///   <see cref="MoveRobber"/> then optional <see cref="RobPlayer"/>
+    /// - <see cref="PlaceInitialPieces"/> enqueues in order:
+    ///     - player 1 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 2 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 3 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 4 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 4 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 3 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 2 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    ///     - player 1 <see cref="BuildTown"/> then <see cref="BuildRoad"/>
+    /// - <see cref="RollDice" /> when 7 rolls, all players must 
+    ///   <see cref="LooseCards" />. This is unordered.
+    /// - When <see cref="OfferTrade"/> all opponents should respond without specific 
+    ///   order. However, when the timeout happens, this must be remvoed.
+    /// 
+    /// Notable exception: playing a <see cref="RoadBuilding"/>: this uses tokens
+    /// to optionally build roads during the <see cref="Building"/> phase.
     public interface IActionQueue
     {
         /// <summary>
@@ -44,6 +64,7 @@ namespace YouTown
         void EnqueueOrdered(IList<IGameAction> orderedActions);
 
         void Dequeue(IGameAction action);
+        List<QueuedItemGroupData> ToData();
     }
 
     public class ActionQueue : IActionQueue
@@ -57,7 +78,7 @@ namespace YouTown
 
         private class Single : IItem
         {
-            private IGameAction _gameAction;
+            internal readonly IGameAction _gameAction;
 
             public Single(IGameAction gameAction, bool isOptional)
             {
@@ -92,7 +113,7 @@ namespace YouTown
 
         private class Ordered : IItem
         {
-            private List<Single> _actions;
+            internal readonly List<Single> _actions;
 
             public Ordered(List<Single> actions)
             {
@@ -118,7 +139,7 @@ namespace YouTown
 
         private class Unordered : IItem
         {
-            private List<Single> _actions;
+            internal readonly List<Single> _actions;
 
             public Unordered(IEnumerable<Single> actions)
             {
@@ -186,6 +207,51 @@ namespace YouTown
             }
             var first = _queue.Peek(); // item itself ensure removal
             first.Remove(_queue, action);
+        }
+
+        public List<QueuedItemGroupData> ToData()
+        {
+            var data = new List<QueuedItemGroupData>();
+            foreach (IItem item in _queue)
+            {
+                var single = item as Single;
+                if (single != null)
+                {
+                    data.Add(new QueuedItemGroupData
+                    {
+                        QueuedItemGroupType = QueuedItemGroupTypeData.Single,
+                        Actions = new List<IBonded<GameActionData>>
+                        {
+                            new Bonded<GameActionData>(single._gameAction.ToData())
+                        }
+                    });
+                }
+                var ordered = item as Ordered;
+                if (ordered != null)
+                {
+                    data.Add(new QueuedItemGroupData
+                    {
+                        QueuedItemGroupType = QueuedItemGroupTypeData.Ordered,
+                        Actions = ordered._actions
+                            .Select(s => new Bonded<GameActionData>(s._gameAction.ToData()))
+                            .Cast<IBonded<GameActionData>>()
+                            .ToList(),
+                    });
+                }
+                var unordered = item as Unordered;
+                if (unordered != null)
+                {
+                    data.Add(new QueuedItemGroupData
+                    {
+                        QueuedItemGroupType = QueuedItemGroupTypeData.Unordered,
+                        Actions = unordered._actions
+                            .Select(s => new Bonded<GameActionData>(s._gameAction.ToData()))
+                            .Cast<IBonded<GameActionData>>()
+                            .ToList(),
+                    });
+                }
+            }
+            return data;
         }
     }
 }

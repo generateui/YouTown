@@ -3,35 +3,33 @@ using YouTown.Validation;
 
 namespace YouTown.GameAction
 {
-    public class EndTurn : IGameAction
+    public class EndTurn : GameActionBase
     {
         public static ActionType EndTurnType = new ActionType("EndTurn");
-        public EndTurn(int id, IPlayer player)
-        {
-            Id = id;
-            Player = player;
-        }
 
-        public int Id { get; }
-        public ActionType ActionType => EndTurnType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public EndTurn(int id, IPlayer player) : base(id, player) { }
+        public EndTurn(EndTurnData data, IRepository repo) : base(data, repo) { }
+
+        public override ActionType ActionType => EndTurnType;
         public IPlayTurnsTurn NextTurn { get; private set; }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
-        public bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase tp) => true;
+        public override bool IsAllowedInGamePhase(IGamePhase gp) => gp.IsTurns;
 
-        public IValidationResult Validate(IGame game) => Validator.Valid;
+        public override GameActionData ToData() =>
+            base.ToData(new EndTurnData
+            {
+                GameActionType = GameActionTypeData.EndTurn
+            });
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override IValidationResult Validate(IGame game) => Validator.Valid;
+
+        public override void PerformAtServer(IServerGame serverGame)
         {
             NextTurn = serverGame.GetNextTurn();
         }
 
-        public void Perform(IGame game)
+        public override void Perform(IGame game)
         {
             var tokens = Player.Pieces.OfType<RoadBuilding.Token>().ToList();
             foreach (RoadBuilding.Token token in tokens)
@@ -40,9 +38,7 @@ namespace YouTown.GameAction
             }
             game.PlayTurns.MoveToNextTurn(NextTurn);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

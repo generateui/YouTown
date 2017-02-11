@@ -86,6 +86,15 @@ namespace YouTown.Validation
             return this;
         }
 
+        public ValidateAll Join(ValidateAll other)
+        {
+            foreach (var validatorValue in other._validatorValues)
+            {
+                _validatorValues.Add(validatorValue);
+            }
+            return this;
+        }
+
         public IValidationResult Validate()
         {
             var invalidDescriptions = new List<string>();

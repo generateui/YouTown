@@ -2,32 +2,38 @@
 
 namespace YouTown.GameAction
 {
-    public class OfferTrade : IGameAction
+    public class OfferTrade : GameActionBase
     {
         public static ActionType OfferTradeType = new ActionType("OfferTrade");
-        public OfferTrade(int id, IPlayer player, IResourceList offered, IResourceList requested)
+
+        public OfferTrade(int id, IPlayer player, IResourceList offered, IResourceList requested) : base(id, player)
         {
-            Id = id;
-            Player = player;
             Offered = offered;
             Requested = requested;
         }
+        public OfferTrade(OfferTradeData data, IRepository repo) : base(data, repo)
+        {
+            Offered = data.Offered.FromData();
+            Requested = data.Requested.FromData();
+        }
 
-        public int Id { get; }
-        public ActionType ActionType => OfferTradeType;
-        public IPlayer Player { get; }
-        public ITurnPhase TurnPhase { get; private set; }
-        public IGamePhase GamePhase { get; private set; }
-        public ITurn Turn { get; private set; }
+        public override ActionType ActionType => OfferTradeType;
         public IResourceList Offered { get; }
         public IResourceList Requested { get; }
-        public bool IsAllowedInOpponentTurn => false;
 
-        public bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
-        public bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+        public override bool IsAllowedInTurnPhase(ITurnPhase turnPhase) => turnPhase.IsTrading;
+        public override bool IsAllowedInGamePhase(IGamePhase gamePhase) => gamePhase.IsTurns;
+
+        public override GameActionData ToData() =>
+            base.ToData(new OfferTradeData
+            {
+                GameActionType = GameActionTypeData.OfferTrade,
+                Offered = Offered?.ToData(),
+                Requested = Requested?.ToData(),
+            });
 
         // TODO: should we check for all other players to have any resource? I have been there...
-        public IValidationResult Validate(IGame game) =>
+        public override IValidationResult Validate(IGame game) =>
             new ValidateAll()
                 .WithObject<NotNull>(Offered)
                 .WithObject<NotNull>(Requested)
@@ -36,18 +42,14 @@ namespace YouTown.GameAction
                 .With<HasResources, IResourceList, IResourceList>(Player.Hand, Offered)
                 .Validate();
 
-        public void PerformAtServer(IServerGame serverGame)
+        public override void Perform(IGame game)
         {
-        }
-
-        public void Perform(IGame game)
-        {
-            var tradeOffer = new TradeOffer(Player, Offered, Requested);
+            var id = game.Identifier.NewId();
+            var tradeOffer = new TradeOffer(id, Player, Offered, Requested);
+            game.Repository.Add(tradeOffer);
             game.PlayTurns.Turn.TradeOffers.Add(tradeOffer);
 
-            TurnPhase = game.PlayTurns.TurnPhase;
-            GamePhase = game.GamePhase;
-            Turn = game.PlayTurns.Turn;
+            base.Perform(game);
         }
     }
 }

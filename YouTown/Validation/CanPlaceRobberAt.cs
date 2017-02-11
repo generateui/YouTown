@@ -1,8 +1,8 @@
 namespace YouTown.Validation
 {
-    public class CanPlaceRobberAt : ValidatorBase<IBoard, Location>
+    public class CanPlaceRobberAt : ValidatorBase<IBoardForPlay, Location>
     {
-        public override IValidationResult Validate(IBoard board, Location location, string text = null)
+        public override IValidationResult Validate(IBoardForPlay board, Location location, string text = null)
         {
             var hex = board.HexesByLocation[location];
             if (!hex.CanHaveRobber)
