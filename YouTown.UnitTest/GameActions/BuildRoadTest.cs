@@ -70,8 +70,17 @@ namespace YouTown.UnitTest.GameActions
             var board = boardMock.Object;
 
             var gameMock = new Mock<IGame>();
+            var repo = new Repository();
+            var actions = new List<IGameAction>();
+//            repo.AddAll();
             gameMock.Setup(g => g.Board).Returns(board);
-            var playTurnsMock = new Mock<PlayTurns>();
+            gameMock.Setup(g => g.Repository).Returns(repo);
+            gameMock.Setup(g => g.Actions).Returns(actions);
+            var playTurnsMock = new Mock<PlayTurns>(
+                Identifier.DontCare, 
+                new Repository(), 
+                new Identifier());
+
             var playTurns = playTurnsMock.Object;
             gameMock.Setup(g => g.GamePhase).Returns(playTurns);
             gameMock.Setup(g => g.PlayTurns).Returns(playTurns);

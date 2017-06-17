@@ -135,7 +135,7 @@ namespace YouTown
         }
     }
 
-    public class VictoryPointCard : DevelopmentCardBase, IDevelopmentCard, IVictoryPoint
+    public class VictoryPointCard : DevelopmentCardBase, IVictoryPoint
     {
         public static DevelopmentCardType VictoryPointCardType = 
             new DevelopmentCardType("VictoryPointCard", id => new VictoryPointCard(id));
@@ -153,7 +153,7 @@ namespace YouTown
         public int VictoryPoints => 1;
     }
 
-    public class Soldier : DevelopmentCardBase, IDevelopmentCard, IObscurable
+    public class Soldier : DevelopmentCardBase, IObscurable
     {
         public static DevelopmentCardType SoldierType = 
             new DevelopmentCardType("Soldier", id => new Soldier(id));
@@ -178,7 +178,7 @@ namespace YouTown
         public IPlayer PlayerAtClient { get; }
     }
 
-    public class Invention : DevelopmentCardBase, IDevelopmentCard, IObscurable
+    public class Invention : DevelopmentCardBase, IObscurable
     {
         public static DevelopmentCardType InventionType = 
             new DevelopmentCardType("Invention", id => new Invention(id));

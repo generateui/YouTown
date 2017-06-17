@@ -49,9 +49,6 @@
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"Die1: {Die1}, Die2: {Die2}";
-        }
+        public override string ToString() => $"Die1: {Die1}, Die2: {Die2}";
     }
 }

@@ -6,8 +6,10 @@ namespace YouTown
     /// <summary>
     /// Uses three-axis system 
     /// </summary>
+    /// Another name for this may be a *tri-ordinate* as this type is 
+    /// represented by three axis values x, y and z.
     /// <seealso cref="http://www.redblobgames.com/grids/hexagons/"/>
-    public class Location
+    public sealed class Location
     {
         private List<Location> _neighbors;
         private List<Edge> _edges;

@@ -48,6 +48,8 @@
                 return (Id*397) ^ Number;
             }
         }
+
+        public override string ToString() => $"Number: {Number}";
     }
     /// <summary>
     /// To be replaced with a real chit when the board is setup
