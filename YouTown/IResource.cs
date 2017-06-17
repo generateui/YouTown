@@ -66,10 +66,7 @@ namespace YouTown
         }
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return Value;
-        }
+        public override string ToString() => Value;
     }
 
     /// <summary>
