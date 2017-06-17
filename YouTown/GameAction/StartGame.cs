@@ -105,7 +105,7 @@ namespace YouTown.GameAction
             var bank = new Bank(bankResources, developmentCards);
 
             var playerList = new PlayerList(players);
-            Game = new Game(playBoard, bank, playerList);
+            Game = new Game(playBoard, bank, playerList, new PlayOptions());
 
             Game.LargestArmy = new LargestArmy(identifier.NewId());
 
