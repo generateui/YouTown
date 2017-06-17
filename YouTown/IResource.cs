@@ -9,9 +9,10 @@ namespace YouTown
     /// Tiny type implementation pattern
     public sealed class ResourceType
     {
-        private readonly string _resourceType;
         private readonly Func<int, IResource> _factory;
-        private static Dictionary<string, ResourceType> _knownTypes = new Dictionary<string, ResourceType>
+        private static readonly Lazy<Dictionary<string, ResourceType>> _knownTypes = 
+            new Lazy<Dictionary<string, ResourceType>>(() => 
+            new Dictionary<string, ResourceType>
         {
             {Timber.TimberType.Value, Timber.TimberType },
             {Wheat.WheatType.Value, Wheat.WheatType },
@@ -19,40 +20,46 @@ namespace YouTown
             {Clay.ClayType.Value, Clay.ClayType },
             {Ore.OreType.Value, Ore.OreType },
             {DummyResource.DummyResourceType.Value, DummyResource.DummyResourceType },
-        };
+        });
 
         public ResourceType(string resourceType, Color color, Func<int, IResource> factory)
         {
-            _resourceType = resourceType;
+            Value = resourceType;
             _factory = factory;
             Color = color;
         }
 
         public Color Color { get; }
-        public string Value => _resourceType;
+        public string Value { get; }
 
         public IResource Create(int id) => _factory(id);
 
         public static ResourceType Parse(string resourceTypeString)
         {
-            if (_knownTypes.ContainsKey(resourceTypeString))
+            if (_knownTypes.Value.ContainsKey(resourceTypeString))
             {
-                return _knownTypes[resourceTypeString];
+                return _knownTypes.Value[resourceTypeString];
             }
             throw new ArgumentException($"unknown {nameof(ResourceType)}");
         }
 
         private bool Equals(ResourceType other)
         {
-            return string.Equals(_resourceType, other._resourceType) && Equals(Color, other.Color);
+            return string.Equals(Value, other.Value) && Equals(Color, other.Color);
         }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType()) { return false;}
             return Equals((ResourceType) obj);
         }
 
@@ -61,7 +68,7 @@ namespace YouTown
         {
             unchecked
             {
-                return ((_resourceType?.GetHashCode() ?? 0)*397) ^ (Color?.GetHashCode() ?? 0);
+                return ((Value?.GetHashCode() ?? 0)*397) ^ (Color?.GetHashCode() ?? 0);
             }
         }
 

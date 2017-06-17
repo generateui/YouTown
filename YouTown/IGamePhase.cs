@@ -64,7 +64,6 @@ namespace YouTown
         public void End(IGame game)
         {
         }
-
     }
 
     /// <summary>
