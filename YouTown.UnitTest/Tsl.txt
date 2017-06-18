@@ -1,0 +1,5 @@
+﻿
+
+1. Specify a state using a dsl
+2. Generate C# code where all stuff is publicly accessible
+3. 
