@@ -1,0 +1,82 @@
+﻿http://unicode.org/emoji/charts/full-emoji-list.html
+shapecatcher.com
+
+
+Unicode chars
+⌂ house 0x2302
+⬡ white hexagon 0x2b21
+⎔ software function symbol 0x2394
+🐑 sheep 0x1f411
+🌲 evergeen tree 0xd83c 0xdf32
+⚌ monogran for yang 0x268c
+🌴 palm tree (island) 0x1f334
+🌾 sheaf of rice 0x1f332
+🌋 volcano 0x1f30b
+🏝 desert island 0x1f3dd
+⛰ mountain 0x26f0
+🏔 snow-capped mountain 0x1f3d4
+🏛 classical building 0x1f3d8
+🏠 house 0x1f3e0
+⛪ church 0x26ea
+⛵ sailboat 0x1f6f6
+⚓ anchor 0x2693
+🏆 trophy 0x1f3c6
+🎲 game die 0x1f382
+🛡 shield 0x1f6e1
+🔨 hammer 0x1f528
+▯ white vertical rectangle 0x25af
+▬ black rectabgle 0x25ac
+◼ black medium square 0x25fc
+💥
+ꕢ 0xa562
+⧞ 0x29de
+ꝏ 0xa74f
+𐌚 old italic letter ef 0x1031a
+𝟖
+ꖉ
+
+TODO:
+clay
+ore
+robber
+
+
+
+
+player 1
+	hand 🐑🐑 🌾🌾 🌲🌲 💥💥 ▬▬
+	devcards ▯▯▯
+	⌂⌂⌂⌂⌂ ⛪⛪⛪⛪
+
+player 2
+
+turn 1
+	player1 🎲8 [p1 🌾🌾◼◼💥💥, p2 🌾🌾◼💥, p3 (🌲🌲)]
+	player1 buys road @ ⬡[0,-1,-1 | 0,-1,0] with [🌲◼]
+	player1 ends turn
+
+turn 2
+	p2 🎲2 []
+	p2 buys devcard with [🌾🐑💥]
+	p2 ends turn
+
+turn 3
+	player3 rolls the dice: 6 [p1 ◼💥, p3 ◼💥]
+	player3 builds a ship @ ꝏ[3,-3,-2 | 3,-3,-3] with [🌲🐑]
+	player3 ends turn
+
+turn 4
+	player4 🎲7
+	player2 looses 4 cards
+	player3 looses 4 cards
+	player4 moves the robber to [0,0,0]
+	player4 steals a resource from player 2
+	player4 ends turn
+
+turn 5
+	player1 plays a soldier
+	player1 moves the robber to [0,0,-1]
+	player1 steals 🐑 from p2
+	player1 🎲5 [p1 ◼🌲, p3 ◼🌲]
+	player1 builds a town @ ꕢ[3,-3,-2 | 3,-3,-3, | 3,-4,-3]
+

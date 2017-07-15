@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTown.UnitTest", "YouTown
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTown.PlainTextUI", "YouTown.PlainTextUI\YouTown.PlainTextUI.csproj", "{6DCF80BA-E28A-4824-B5D7-A4358CCA6C57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTown.SpecFlow.Core", "YouTown.SpecFlow.Core\YouTown.SpecFlow.Core.csproj", "{3AA41AC9-BED5-44D6-9C9A-C153DCD51D00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6DCF80BA-E28A-4824-B5D7-A4358CCA6C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DCF80BA-E28A-4824-B5D7-A4358CCA6C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DCF80BA-E28A-4824-B5D7-A4358CCA6C57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AA41AC9-BED5-44D6-9C9A-C153DCD51D00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AA41AC9-BED5-44D6-9C9A-C153DCD51D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AA41AC9-BED5-44D6-9C9A-C153DCD51D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AA41AC9-BED5-44D6-9C9A-C153DCD51D00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
